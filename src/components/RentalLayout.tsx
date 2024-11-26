@@ -88,7 +88,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
   ];
 
   return (
-    <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl shadow-xl p-6 w-[680px]">
+    <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl shadow-xl p-6 w-[680px] max-w-full mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-emerald-800">Select dates</h3>
         <button onClick={onClose} className="p-2 hover:bg-emerald-100 rounded-full text-emerald-600">
@@ -201,19 +201,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="flex justify-between items-start mb-2">
           <div>
             <h3 className="font-semibold text-lg text-emerald-800 truncate">{property.title}</h3>
-            <div className="flex items-center text-emerald-600 text-sm">
-              <MapPin className="h-4 w-4 mr-1" />
-              {property.location}
+            <div className="flex items-center text-sm text-emerald-600">
+              <MapPin className="h-4 w-4" />
+              <span className="ml-1">{property.location}</span>
             </div>
-          </div>
-          <span className="text-sm text-emerald-600">{property.dates}</span>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <Star className="h-4 w-4 text-yellow-400" />
-            <span className="text-sm text-emerald-800 ml-1">{property.rating}</span>
-            <span className="text-sm text-emerald-600 ml-2">({property.reviews})</span>
+            <div className="flex items-center mt-1 text-sm text-emerald-600">
+              <Star className="h-4 w-4" />
+              <span className="ml-1">{property.rating}</span>
+              <span className="ml-2">({property.reviews} reviews)</span>
+            </div>
           </div>
           <div className="font-semibold text-lg text-emerald-800">{`$${property.price}/night`}</div>
         </div>
@@ -228,35 +224,35 @@ const App: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const properties: Property[] = [
-    // Your property objects
+    // Add property objects here
   ];
 
   return (
-    <div className="min-h-screen bg-emerald-50 flex flex-col items-center py-8 px-4">
-      <div className="w-full max-w-7xl flex justify-between mb-6">
-        <div className="flex-1">
+    <div className="min-h-screen bg-emerald-50 flex flex-col justify-between py-8 px-4">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="font-bold text-2xl text-emerald-800">Explore Properties</h1>
+          <button
+            onClick={() => setShowDatePicker(true)}
+            className="py-2 px-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+          >
+            Select Dates
+          </button>
         </div>
-        <button
-          onClick={() => setShowDatePicker(true)}
-          className="py-2 px-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
-        >
-          Select Dates
-        </button>
-      </div>
 
-      {showDatePicker && (
-        <DatePicker 
-          selectedDates={selectedDates} 
-          onSelectDate={setSelectedDates} 
-          onClose={() => setShowDatePicker(false)} 
-        />
-      )}
+        {showDatePicker && (
+          <DatePicker 
+            selectedDates={selectedDates} 
+            onSelectDate={setSelectedDates} 
+            onClose={() => setShowDatePicker(false)} 
+          />
+        )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {properties.map(property => (
-          <PropertyCard key={property.id} property={property} />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {properties.map(property => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
       </div>
     </div>
   );
