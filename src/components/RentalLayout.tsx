@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Heart, User, MapPin, Star, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, MapPin, Star, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Type declarations
 interface Property {
@@ -33,7 +33,6 @@ interface CalendarDay {
 // DatePicker Component
 const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, onClose }) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   const getDaysInMonth = (date: Date): CalendarDay[] => {
     const year = date.getFullYear();
@@ -137,8 +136,6 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
                     key={index}
                     disabled={day.isDisabled}
                     onClick={() => handleDateClick(day.date)}
-                    onMouseEnter={() => setHoverDate(day.date)}
-                    onMouseLeave={() => setHoverDate(null)}
                     className={`
                       h-8 flex items-center justify-center text-sm rounded-full transition-all
                       ${!day.date ? 'invisible' : ''}
@@ -209,10 +206,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               {property.location}
             </div>
           </div>
-          <div className="flex items-center bg-emerald-50 px-2 py-1 rounded-full">
-            <Star className="h-4 w-4 text-emerald-600 mr-1" />
-            <span className="text-emerald-600 text-sm">{property.rating}</span>
+          <span className="text-sm text-emerald-600">{property.dates}</span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <Star className="h-4 w-4 text-yellow-400" />
+            <span className="ml-1 text-sm text-emerald-600">{property.rating}</span>
           </div>
+          <span className="text-sm text-emerald-600">{property.reviews} reviews</span>
         </div>
 
         <div className="flex justify-between items-center mt-2">
