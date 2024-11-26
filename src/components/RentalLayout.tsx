@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MapPin, Star, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Heart, User, MapPin, Star, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Type declarations
 interface Property {
@@ -33,18 +33,19 @@ interface CalendarDay {
 // DatePicker Component
 const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, onClose }) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   const getDaysInMonth = (date: Date): CalendarDay[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayIndex = new Date(year, month, 1).getDay();
-
+    
     const days: CalendarDay[] = [];
     for (let i = 0; i < firstDayIndex; i++) {
       days.push({ date: null, isDisabled: true });
     }
-
+    
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       days.push({
@@ -52,13 +53,13 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
         isDisabled: date < new Date(new Date().setHours(0, 0, 0, 0)),
       });
     }
-
+    
     return days;
   };
 
   const isDateSelected = (date: Date | null): boolean => {
     if (!date) return false;
-    return selectedDates.some(selectedDate =>
+    return selectedDates.some(selectedDate => 
       selectedDate?.toDateString() === date.toDateString()
     );
   };
@@ -88,7 +89,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
   ];
 
   return (
-    <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl shadow-xl p-6 w-[680px] max-w-full mx-auto">
+    <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl shadow-xl p-6 w-[680px]">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-emerald-800">Select dates</h3>
         <button onClick={onClose} className="p-2 hover:bg-emerald-100 rounded-full text-emerald-600">
@@ -136,6 +137,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
                     key={index}
                     disabled={day.isDisabled}
                     onClick={() => handleDateClick(day.date)}
+                    onMouseEnter={() => setHoverDate(day.date)}
+                    onMouseLeave={() => setHoverDate(null)}
                     className={`
                       h-8 flex items-center justify-center text-sm rounded-full transition-all
                       ${!day.date ? 'invisible' : ''}
@@ -201,61 +204,178 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="flex justify-between items-start mb-2">
           <div>
             <h3 className="font-semibold text-lg text-emerald-800 truncate">{property.title}</h3>
-            <div className="flex items-center text-sm text-emerald-600">
-              <MapPin className="h-4 w-4" />
-              <span className="ml-1">{property.location}</span>
-            </div>
-            <div className="flex items-center mt-1 text-sm text-emerald-600">
-              <Star className="h-4 w-4" />
-              <span className="ml-1">{property.rating}</span>
-              <span className="ml-2">({property.reviews} reviews)</span>
+            <div className="flex items-center text-emerald-600 text-sm">
+              <MapPin className="h-4 w-4 mr-1" />
+              {property.location}
             </div>
           </div>
-          <div className="font-semibold text-lg text-emerald-800">{`$${property.price}/night`}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Main Component
-const App: React.FC = () => {
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const properties: Property[] = [
-    // Add property objects here
-  ];
-
-  return (
-    <div className="min-h-screen bg-emerald-50 flex flex-col justify-between py-8 px-4">
-      <div className="w-full max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="font-bold text-2xl text-emerald-800">Explore Properties</h1>
-          <button
-            onClick={() => setShowDatePicker(true)}
-            className="py-2 px-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
-          >
-            Select Dates
-          </button>
+          <div className="flex items-center bg-emerald-50 px-2 py-1 rounded-full">
+            <Star className="h-4 w-4 text-emerald-600 mr-1" />
+            <span className="font-medium text-emerald-800">{property.rating}</span>
+          </div>
         </div>
 
-        {showDatePicker && (
-          <DatePicker 
-            selectedDates={selectedDates} 
-            onSelectDate={setSelectedDates} 
-            onClose={() => setShowDatePicker(false)} 
-          />
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {properties.map(property => (
-            <PropertyCard key={property.id} property={property} />
+        <div className="flex flex-wrap gap-1 my-2">
+          {property.amenities?.slice(0, 3).map((amenity, index) => (
+            <span 
+              key={index}
+              className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-full"
+            >
+              {amenity}
+            </span>
           ))}
         </div>
+
+        <div className="mt-4 flex items-baseline">
+          <span className="text-lg font-semibold text-emerald-800">${property.price}</span>
+          <span className="text-emerald-600 ml-1">/ night</span>
+        </div>
+
+        <div className="mt-1 text-sm text-emerald-600">
+          {property.reviews} reviews
+        </div>
       </div>
     </div>
   );
 };
 
-export default App;
+// Property Grid Component
+const PropertyGrid: React.FC = () => {
+  const [properties] = useState<Property[]>([
+    {
+      id: 1,
+      price: 150,
+      image: "/api/placeholder/400/300",
+      title: "Cozy Beach House",
+      location: "Malibu, California",
+      dates: "Available all year",
+      rating: 4.8,
+      reviews: 124,
+      category: "Beach",
+      amenities: ["WiFi", "Pool", "Ocean View"]
+    },
+    {
+      id: 2,
+      price: 200,
+      image: "/api/placeholder/400/300",
+      title: "Mountain Retreat",
+      location: "Aspen, Colorado",
+      dates: "Winter season",
+      rating: 4.9,
+      reviews: 89,
+      category: "Mountain",
+      amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"]
+    },
+    {
+      id: 3,
+      price: 175,
+      image: "/api/placeholder/400/300",
+      title: "Downtown Loft",
+      location: "New York, NY",
+      dates: "Available all year",
+      rating: 4.7,
+      reviews: 156,
+      category: "City",
+      amenities: ["WiFi", "Gym", "Doorman"]
+    },
+    {
+      id: 4,
+      price: 120,
+      image: "/api/placeholder/400/300",
+      title: "Desert Oasis",
+      location: "Phoenix, Arizona",
+      dates: "Available all year",
+      rating: 4.6,
+      reviews: 92,
+      category: "Desert",
+      amenities: ["Pool", "AC", "Mountain View"]
+    }
+  ]);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-emerald-800">Featured Properties</h2>
+        <div className="flex gap-4">
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {properties.map(property => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Main Layout Component
+const RentalLayout: React.FC = () => {
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+
+  const getDateRangeDisplay = (): string => {
+    if (selectedDates.length === 0) return 'Select dates';
+    if (selectedDates.length === 1) return selectedDates[0].toLocaleDateString();
+    return `${selectedDates[0].toLocaleDateString()} - ${selectedDates[1].toLocaleDateString()}`;
+  };
+
+  return (
+    <div className="min-h-screen w-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
+      <nav className="w-full bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-50">
+        <div className="w-full flex items-center justify-between px-4 py-4">
+          <div className="text-2xl font-bold text-emerald-600 cursor-pointer hover:text-emerald-700 transition-colors">
+            StayScape
+          </div>
+          
+          <div className="flex-1 max-w-2xl mx-4 relative">
+            <div className="w-full flex items-center justify-between px-6 py-3 rounded-full border border-emerald-200 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <div className="flex items-center gap-6 text-sm">
+                <input
+                  type="text"
+                  placeholder="Where to?"
+                  className="outline-none bg-transparent w-32 placeholder-emerald-400"
+                />
+                <button 
+                  onClick={() => setShowDatePicker(true)}
+                  className="border-l border-emerald-100 pl-6 font-medium text-emerald-600 hover:text-emerald-700"
+                >
+                  {getDateRangeDisplay()}
+                </button>
+                <button className="border-l border-emerald-100 pl-6 text-emerald-500 hover:text-emerald-700">
+                  Add guests
+                </button>
+              </div>
+              <div className="bg-emerald-600 p-2 rounded-full text-white hover:bg-emerald-700 transition-colors cursor-pointer">
+                <Search className="h-4 w-4" />
+              </div>
+            </div>
+
+            {showDatePicker && (
+              <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50">
+                <DatePicker
+                  selectedDates={selectedDates}
+                  onSelectDate={setSelectedDates}
+                  onClose={() => setShowDatePicker(false)}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button className="px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors">
+              List your property
+            </button>
+            <button className="p-2 hover:bg-emerald-50 rounded-full text-emerald-600 transition-colors">
+              <User className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <PropertyGrid />
+    </div>
+  );
+};
+
+export default RentalLayout;
