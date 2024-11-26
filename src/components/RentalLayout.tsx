@@ -33,7 +33,6 @@ interface CalendarDay {
 // DatePicker Component
 const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, onClose }) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   const getDaysInMonth = (date: Date): CalendarDay[] => {
     const year = date.getFullYear();
@@ -137,8 +136,6 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
                     key={index}
                     disabled={day.isDisabled}
                     onClick={() => handleDateClick(day.date)}
-                    onMouseEnter={() => setHoverDate(day.date)}
-                    onMouseLeave={() => setHoverDate(null)}
                     className={`
                       h-8 flex items-center justify-center text-sm rounded-full transition-all
                       ${!day.date ? 'invisible' : ''}
@@ -296,8 +293,6 @@ const PropertyGrid: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-emerald-800">Featured Properties</h2>
-        <div className="flex gap-4">
-        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
