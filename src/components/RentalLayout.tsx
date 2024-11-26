@@ -212,98 +212,54 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Star className="h-4 w-4 text-yellow-400" />
-            <span className="ml-1 text-sm text-emerald-600">{property.rating}</span>
+            <span className="text-sm text-emerald-800 ml-1">{property.rating}</span>
+            <span className="text-sm text-emerald-600 ml-2">({property.reviews})</span>
           </div>
-          <span className="text-sm text-emerald-600">{property.reviews} reviews</span>
-        </div>
-
-        <div className="flex justify-between items-center mt-2">
-          <span className="font-semibold text-xl text-emerald-800">${property.price} / night</span>
-          <button className="bg-emerald-600 text-white rounded-lg px-4 py-2">Book Now</button>
+          <div className="font-semibold text-lg text-emerald-800">{`$${property.price}/night`}</div>
         </div>
       </div>
     </div>
   );
 };
 
-// PropertyGrid Component
-const PropertyGrid: React.FC<{ properties: Property[] }> = ({ properties }) => {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-      {properties.map(property => (
-        <PropertyCard key={property.id} property={property} />
-      ))}
-    </div>
-  );
-};
-
-// Main Layout Component
-const RentalLayout: React.FC = () => {
+// Main Component
+const App: React.FC = () => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleSelectDate = (dates: Date[]) => {
-    setSelectedDates(dates);
-    setShowDatePicker(false);
-  };
-
-  const handleCloseDatePicker = () => {
-    setShowDatePicker(false);
-  };
-
   const properties: Property[] = [
-    {
-      id: 1,
-      price: 250,
-      image: "/path/to/image1.jpg",
-      title: "Oceanfront Villa",
-      location: "Malibu, CA",
-      dates: "2024-12-01 to 2024-12-07",
-      rating: 4.8,
-      reviews: 132,
-      category: "villa",
-      amenities: ["pool", "wifi", "air conditioning"],
-    },
-    {
-      id: 2,
-      price: 150,
-      image: "/path/to/image2.jpg",
-      title: "Cozy Cottage",
-      location: "Lake Tahoe, CA",
-      dates: "2024-12-15 to 2024-12-22",
-      rating: 4.5,
-      reviews: 88,
-      category: "cottage",
-      amenities: ["fireplace", "kitchen", "wifi"],
-    },
-    // Add more properties here
+    // Your property objects
   ];
 
   return (
-    <div className="p-8 bg-gradient-to-b from-emerald-50 to-white min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold text-emerald-800">Find Your Next Getaway</h1>
-          <button 
-            onClick={() => setShowDatePicker(true)} 
-            className="bg-emerald-600 text-white py-2 px-4 rounded-lg"
-          >
-            Select Dates
-          </button>
+    <div className="min-h-screen bg-emerald-50 flex flex-col items-center py-8 px-4">
+      <div className="w-full max-w-7xl flex justify-between mb-6">
+        <div className="flex-1">
+          <h1 className="font-bold text-2xl text-emerald-800">Explore Properties</h1>
         </div>
+        <button
+          onClick={() => setShowDatePicker(true)}
+          className="py-2 px-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+        >
+          Select Dates
+        </button>
+      </div>
 
-        {showDatePicker && (
-          <DatePicker 
-            selectedDates={selectedDates} 
-            onSelectDate={handleSelectDate} 
-            onClose={handleCloseDatePicker} 
-          />
-        )}
+      {showDatePicker && (
+        <DatePicker 
+          selectedDates={selectedDates} 
+          onSelectDate={setSelectedDates} 
+          onClose={() => setShowDatePicker(false)} 
+        />
+      )}
 
-        <PropertyGrid properties={properties} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {properties.map(property => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
       </div>
     </div>
   );
 };
 
-export default RentalLayout;
+export default App;
