@@ -33,8 +33,7 @@ interface CalendarDay {
 // DatePicker Component
 const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, onClose }) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [hoverDate, setHoverDate] = useState<Date | null>(null);
+ 
 
   const getDaysInMonth = (date: Date): CalendarDay[] => {
     const year = date.getFullYear();
