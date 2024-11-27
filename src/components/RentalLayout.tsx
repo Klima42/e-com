@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { 
   Search, 
   Heart, 
@@ -12,6 +12,7 @@ import {
   Calendar,
   Sliders
 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Type declarations
 interface Property {
@@ -135,7 +136,6 @@ const getMonthDays = (year: number, month: number): number => {
 const getMonthFirstDay = (year: number, month: number): number => {
   return new Date(year, month, 1).getDay();
 };
-
 // Filter Modal Component
 const FilterModal: React.FC<FilterModalProps> = ({ filters, onFilterUpdate, onClose }) => {
   const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
@@ -262,6 +262,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ filters, onFilterUpdate, onCl
     </div>
   );
 };
+
 // DatePicker Component
 const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, onClose }) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -503,9 +504,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   dateDisplay,
   guestDisplay,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSearch(searchTerm);
   };
@@ -546,7 +547,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
     </form>
   );
 };
-
 // Property Card Component
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -638,6 +638,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     </div>
   );
 };
+
 // Property Grid Component
 const PropertyGrid: React.FC<PropertyGridProps> = ({ properties }) => {
   const [filters, setFilters] = useState<FilterOptions>({
@@ -701,7 +702,6 @@ const PropertyGrid: React.FC<PropertyGridProps> = ({ properties }) => {
     </div>
   );
 };
-
 // Main Layout Component
 const RentalLayout: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
@@ -713,7 +713,7 @@ const RentalLayout: React.FC = () => {
     infants: 0
   });
   
-  const [properties, setProperties] = useState<Property[]>(sampleProperties);
+  const [properties] = useState<Property[]>(sampleProperties);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchedProperties, setSearchedProperties] = useState<Property[]>(properties);
 
@@ -821,14 +821,6 @@ const RentalLayout: React.FC = () => {
 };
 
 // Error Boundary Component
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
-
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
-
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
