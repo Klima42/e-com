@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Heart, 
@@ -12,7 +12,6 @@ import {
   Calendar,
   Sliders
 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Type declarations
 interface Property {
@@ -84,6 +83,14 @@ interface FilterModalProps {
   filters: FilterOptions;
   onFilterUpdate: (filters: FilterOptions) => void;
   onClose: () => void;
+}
+
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
 }
 
 // Sample Data
