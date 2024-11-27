@@ -709,7 +709,8 @@ const PropertyGrid: React.FC<PropertyGridProps> = ({ properties }) => {
     </div>
   );
 };
-// Main Layout Component
+
+
 const RentalLayout: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [showGuestSelector, setShowGuestSelector] = useState<boolean>(false);
@@ -756,8 +757,9 @@ const RentalLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
+      {/* Navigation Bar - Full width with centered content */}
       <nav className="w-full bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-[95%] mx-auto"> {/* Changed from max-w-7xl to w-[95%] */}
           <div className="w-full flex items-center justify-between py-4">
             <div className="text-2xl font-bold text-emerald-600 cursor-pointer hover:text-emerald-700 transition-colors">
               StayScape
@@ -812,12 +814,16 @@ const RentalLayout: React.FC = () => {
         </div>
       </nav>
 
-      <main>
-        <PropertyGrid properties={searchedProperties} />
+      {/* Main Content - Full width */}
+      <main className="w-full">
+        <div className="w-[95%] mx-auto"> {/* Changed from max-w-7xl to w-[95%] */}
+          <PropertyGrid properties={searchedProperties} />
+        </div>
       </main>
 
+      {/* Footer - Full width with centered content */}
       <footer className="bg-white border-t border-emerald-100 mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="w-[95%] mx-auto py-8"> {/* Changed from max-w-7xl to w-[95%] */}
           <div className="text-center text-sm text-emerald-600">
             © 2024 StayScape. All rights reserved.
           </div>
@@ -827,52 +833,4 @@ const RentalLayout: React.FC = () => {
   );
 };
 
-// Error Boundary Component
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(_: Error): ErrorBoundaryState {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error('Error:', error, errorInfo);
-  }
-
-  render(): React.ReactNode {
-    if (this.state.hasError) {
-      return (
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
-          <h2 className="text-2xl font-semibold text-emerald-800 mb-2">
-            Oops! Something went wrong
-          </h2>
-          <p className="text-emerald-600 mb-6">
-            We're sorry, but there was an error loading this content.
-          </p>
-          <button
-            onClick={() => this.setState({ hasError: false })}
-            className="px-6 py-2 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// App Component
-const App: React.FC = () => {
-  return (
-    <ErrorBoundary>
-      <RentalLayout />
-    </ErrorBoundary>
-  );
-};
-
-export default App;
+export default RentalLayout;
