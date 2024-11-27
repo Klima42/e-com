@@ -13,7 +13,7 @@ import {
   Sliders
 } from 'lucide-react';
 
-// Type declarations
+// Define only the types we need
 interface Property {
   id: number;
   price: number;
@@ -31,6 +31,7 @@ interface Property {
   instantBook: boolean;
   superhost: boolean;
 }
+
 
 interface GuestCount {
   adults: number;
@@ -710,24 +711,6 @@ const PropertyGrid: React.FC<PropertyGridProps> = ({ properties }) => {
   );
 };
 
-// Define only the types we need
-interface Property {
-  id: number;
-  price: number;
-  image: string;
-  title: string;
-  location: string;
-  dates: string;
-  rating: number;
-  reviews: number;
-  category: string;
-  amenities: string[];
-  maxGuests: number;
-  bedroomCount: number;
-  bathCount: number;
-  instantBook: boolean;
-  superhost: boolean;
-}
 
 interface GuestCount {
   adults: number;
