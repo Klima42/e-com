@@ -10,7 +10,8 @@ import {
   ChevronRight, 
   Users, 
   Filter,
-  Calendar
+  Calendar,
+  Sliders
 } from 'lucide-react';
 
 // Type declarations
@@ -75,6 +76,50 @@ interface SearchBarProps {
   guestDisplay: string;
 }
 
+interface FilterModalProps {
+  filters: FilterOptions;
+  onFilterUpdate: (filters: FilterOptions) => void;
+  onClose: () => void;
+}
+
+// Sample property data
+const sampleProperties: Property[] = [
+  {
+    id: 1,
+    price: 150,
+    image: "/api/placeholder/400/300",
+    title: "Cozy Beach House",
+    location: "Malibu, California",
+    dates: "Available all year",
+    rating: 4.8,
+    reviews: 124,
+    category: "Beach",
+    amenities: ["WiFi", "Pool", "Ocean View"],
+    maxGuests: 6,
+    bedroomCount: 3,
+    bathCount: 2,
+    instantBook: true,
+    superhost: true
+  },
+  {
+    id: 2,
+    price: 200,
+    image: "/api/placeholder/400/300",
+    title: "Mountain Retreat",
+    location: "Aspen, Colorado",
+    dates: "Winter season",
+    rating: 4.9,
+    reviews: 89,
+    category: "Mountain",
+    amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
+    maxGuests: 8,
+    bedroomCount: 4,
+    bathCount: 3,
+    instantBook: false,
+    superhost: true
+  }
+];
+
 // Helper Functions
 const getMonthDays = (year: number, month: number): number => {
   return new Date(year, month + 1, 0).getDate();
@@ -84,6 +129,114 @@ const getMonthFirstDay = (year: number, month: number): number => {
   return new Date(year, month, 1).getDay();
 };
 
+// Filter Modal Component
+const FilterModal: React.FC<FilterModalProps> = ({ filters, onFilterUpdate, onClose }) => {
+  const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
+
+  const handlePriceChange = (value: [number, number]) => {
+    setLocalFilters(prev => ({ ...prev, priceRange: value }));
+  };
+
+  const handleInstantBookToggle = () => {
+    setLocalFilters(prev => ({ ...prev, instantBook: !prev.instantBook }));
+  };
+
+  const handlePropertyTypeToggle = (type: string) => {
+    setLocalFilters(prev => ({
+      ...prev,
+      propertyType: prev.propertyType.includes(type)
+        ? prev.propertyType.filter(t => t !== type)
+        : [...prev.propertyType, type]
+    }));
+  };
+
+  const handleAmenityToggle = (amenity: string) => {
+    setLocalFilters(prev => ({
+      ...prev,
+      amenities: prev.amenities.includes(amenity)
+        ? prev.amenities.filter(a => a !== amenity)
+        : [...prev.amenities, amenity]
+    }));
+  };
+
+  const handleApplyFilters = () => {
+    onFilterUpdate(localFilters);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-semibold text-emerald-800">Filters</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-emerald-100 rounded-full"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Price Range */}
+        <div className="mb-6">
+          <h4 className="font-medium mb-4">Price Range</h4>
+          <input
+            type="range"
+            min={0}
+            max={1000}
+            step={50}
+            value={localFilters.priceRange[1]}
+            onChange={(e) => handlePriceChange([localFilters.priceRange[0], parseInt(e.target.value)])}
+            className="w-full"
+          />
+          <div className="flex justify-between mt-2">
+            <span>${localFilters.priceRange[0]}</span>
+            <span>${localFilters.priceRange[1]}</span>
+          </div>
+        </div>
+
+        {/* Instant Book */}
+        <div className="mb-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={localFilters.instantBook}
+              onChange={handleInstantBookToggle}
+              className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+            />
+            <span>Instant Book</span>
+          </label>
+        </div>
+
+        {/* Property Types */}
+        <div className="mb-6">
+          <h4 className="font-medium mb-4">Property Type</h4>
+          <div className="space-y-2">
+            {['Beach', 'Mountain', 'City', 'Countryside', 'Lake', 'Desert'].map(type => (
+              <label key={type} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={localFilters.propertyType.includes(type)}
+                  onChange={() => handlePropertyTypeToggle(type)}
+                  className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span>{type}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Apply Button */}
+        <button
+          onClick={handleApplyFilters}
+          className="w-full py-3 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors"
+        >
+          Apply Filters
+        </button>
+      </div>
+    </div>
+  );
+};
 // DatePicker Component
 const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, onClose }) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -118,6 +271,11 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
     return selectedDates.some(selectedDate => 
       selectedDate.toDateString() === date.toDateString()
     );
+  };
+
+  const isDateInRange = (date: Date | null): boolean => {
+    if (!date || selectedDates.length !== 2) return false;
+    return date > selectedDates[0] && date < selectedDates[1];
   };
 
   const handleDateClick = (day: CalendarDay) => {
@@ -204,6 +362,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
                       ${!day.date ? 'invisible' : ''}
                       ${day.isDisabled ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-emerald-100'}
                       ${isDateSelected(day.date) ? 'bg-emerald-600 text-white' : ''}
+                      ${isDateInRange(day.date) ? 'bg-emerald-100' : ''}
                     `}
                   >
                     {day.date?.getDate()}
@@ -214,10 +373,26 @@ const DatePicker: React.FC<DatePickerProps> = ({ selectedDates, onSelectDate, on
           );
         })}
       </div>
+
+      {selectedDates.length > 0 && (
+        <div className="mt-6 pt-4 border-t border-emerald-100 flex justify-between items-center">
+          <div className="text-sm text-emerald-600">
+            {selectedDates.length === 2 
+              ? `${selectedDates[0].toLocaleDateString()} - ${selectedDates[1].toLocaleDateString()}`
+              : selectedDates[0].toLocaleDateString()
+            }
+          </div>
+          <button
+            onClick={() => onSelectDate([])}
+            className="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-full"
+          >
+            Clear dates
+          </button>
+        </div>
+      )}
     </div>
   );
 };
-
 // Guest Selector Component
 const GuestSelector: React.FC<GuestSelectorProps> = ({ 
   guestCount, 
@@ -305,12 +480,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleSearch = () => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     onSearch(searchTerm);
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-3 rounded-full border border-emerald-200 shadow-sm hover:shadow-md transition-shadow bg-white">
+    <form onSubmit={handleSearchSubmit} className="flex items-center justify-between px-6 py-3 rounded-full border border-emerald-200 shadow-sm hover:shadow-md transition-shadow bg-white">
       <div className="flex items-center gap-6 text-sm">
         <input
           type="text"
@@ -320,6 +496,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           className="outline-none bg-transparent w-32 placeholder-emerald-400"
         />
         <button 
+          type="button"
           onClick={onDateClick}
           className="border-l border-emerald-100 pl-6 font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-2"
         >
@@ -327,6 +504,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {dateDisplay}
         </button>
         <button 
+          type="button"
           onClick={onGuestClick}
           className="border-l border-emerald-100 pl-6 text-emerald-500 hover:text-emerald-700 flex items-center gap-2"
         >
@@ -335,12 +513,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </button>
       </div>
       <button 
-        onClick={handleSearch}
+        type="submit"
         className="bg-emerald-600 p-2 rounded-full text-white hover:bg-emerald-700 transition-colors"
       >
         <Search className="h-4 w-4" />
       </button>
-    </div>
+    </form>
   );
 };
 
@@ -405,6 +583,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="flex items-center gap-2 text-sm text-emerald-600 mt-2">
           <span>{property.bedroomCount} bed</span>
           <span>•</span>
+          <span>{property.bathCount} bath</span>
+          <span>•</span>
           <span>Max {property.maxGuests} guests</span>
         </div>
 
@@ -433,54 +613,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     </div>
   );
 };
-
 // Property Grid Component
 const PropertyGrid: React.FC = () => {
-  const [properties] = useState<Property[]>([
-    {
-      id: 1,
-      price: 150,
-      image: "/api/placeholder/400/300",
-      title: "Cozy Beach House",
-      location: "Malibu, California",
-      dates: "Available all year",
-      rating: 4.8,
-      reviews: 124,
-      category: "Beach",
-      amenities: ["WiFi", "Pool", "Ocean View"],
-      maxGuests: 6,
-      bedroomCount: 3,
-      bathCount: 2,
-      instantBook: true,
-      superhost: true
-    },
-    {
-      id: 2,
-      price: 200,
-      image: "/api/placeholder/400/300",
-      title: "Mountain Retreat",
-      location: "Aspen, Colorado",
-      dates: "Winter season",
-      rating: 4.9,
-      reviews: 89,
-      category: "Mountain",
-      amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
-      maxGuests: 8,
-      bedroomCount: 4,
-      bathCount: 3,
-      instantBook: false,
-      superhost: true
-    },
-    // Add more properties as needed
-  ]);
-
+  const [properties] = useState<Property[]>(sampleProperties);
   const [filters, setFilters] = useState<FilterOptions>({
     priceRange: [0, 1000],
     instantBook: false,
     propertyType: [],
     amenities: []
   });
-
+  const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
 
   useEffect(() => {
@@ -500,6 +642,10 @@ const PropertyGrid: React.FC = () => {
     setFilteredProperties(filtered);
   }, [filters, properties]);
 
+  const handleFilterUpdate = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -507,12 +653,21 @@ const PropertyGrid: React.FC = () => {
           Featured Properties
         </h2>
         <button 
+          onClick={() => setShowFilterModal(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 text-emerald-600 hover:bg-emerald-50"
         >
-          <Filter className="h-4 w-4" />
+          <Sliders className="h-4 w-4" />
           Filters
         </button>
       </div>
+
+      {showFilterModal && (
+        <FilterModal
+          filters={filters}
+          onFilterUpdate={handleFilterUpdate}
+          onClose={() => setShowFilterModal(false)}
+        />
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProperties.map(property => (
@@ -534,6 +689,24 @@ const RentalLayout: React.FC = () => {
     infants: 0
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [properties] = useState<Property[]>(sampleProperties);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = properties.filter(property => 
+        property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        property.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProperties(filtered);
+    } else {
+      setFilteredProperties(properties);
+    }
+  }, [searchQuery, properties]);
+
+  const handleSearch = (location: string) => {
+    setSearchQuery(location);
+  };
 
   const getDateRangeDisplay = (): string => {
     if (selectedDates.length === 0) return 'Select dates';
@@ -547,11 +720,6 @@ const RentalLayout: React.FC = () => {
     return guestCount.infants > 0 
       ? `${guestText}, ${guestCount.infants} infant${guestCount.infants !== 1 ? 's' : ''}` 
       : guestText;
-  };
-
-  const handleSearch = (location: string) => {
-    setSearchQuery(location);
-    // Implement search logic here
   };
 
   return (
