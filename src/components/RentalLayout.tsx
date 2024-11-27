@@ -8,8 +8,7 @@ import {
   X, 
   ChevronLeft, 
   ChevronRight, 
-  Users, 
-  Filter,
+  Users,
   Calendar,
   Sliders
 } from 'lucide-react';
@@ -63,6 +62,10 @@ interface PropertyCardProps {
   property: Property;
 }
 
+interface PropertyGridProps {
+  properties: Property[];
+}
+
 interface CalendarDay {
   date: Date | null;
   isDisabled: boolean;
@@ -82,7 +85,7 @@ interface FilterModalProps {
   onClose: () => void;
 }
 
-// Sample property data
+// Sample Data
 const sampleProperties: Property[] = [
   {
     id: 1,
@@ -119,6 +122,10 @@ const sampleProperties: Property[] = [
     superhost: true
   }
 ];
+
+// Constants
+const PROPERTY_CATEGORIES = ['Beach', 'Mountain', 'City', 'Countryside', 'Lake', 'Desert'];
+const COMMON_AMENITIES = ['WiFi', 'Pool', 'Kitchen', 'Parking', 'AC', 'Heating', 'Washer', 'Dryer'];
 
 // Helper Functions
 const getMonthDays = (year: number, month: number): number => {
@@ -212,7 +219,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ filters, onFilterUpdate, onCl
         <div className="mb-6">
           <h4 className="font-medium mb-4">Property Type</h4>
           <div className="space-y-2">
-            {['Beach', 'Mountain', 'City', 'Countryside', 'Lake', 'Desert'].map(type => (
+            {PROPERTY_CATEGORIES.map(type => (
               <label key={type} className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -221,6 +228,24 @@ const FilterModal: React.FC<FilterModalProps> = ({ filters, onFilterUpdate, onCl
                   className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
                 />
                 <span>{type}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Amenities */}
+        <div className="mb-6">
+          <h4 className="font-medium mb-4">Amenities</h4>
+          <div className="space-y-2">
+            {COMMON_AMENITIES.map(amenity => (
+              <label key={amenity} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={localFilters.amenities.includes(amenity)}
+                  onChange={() => handleAmenityToggle(amenity)}
+                  className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span>{amenity}</span>
               </label>
             ))}
           </div>
@@ -614,8 +639,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   );
 };
 // Property Grid Component
-const PropertyGrid: React.FC = () => {
-  const [properties] = useState<Property[]>(sampleProperties);
+const PropertyGrid: React.FC<PropertyGridProps> = ({ properties }) => {
   const [filters, setFilters] = useState<FilterOptions>({
     priceRange: [0, 1000],
     instantBook: false,
@@ -688,9 +712,10 @@ const RentalLayout: React.FC = () => {
     children: 0,
     infants: 0
   });
+  
+  const [properties, setProperties] = useState<Property[]>(sampleProperties);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [properties] = useState<Property[]>(sampleProperties);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
+  const [searchedProperties, setSearchedProperties] = useState<Property[]>(properties);
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -698,9 +723,9 @@ const RentalLayout: React.FC = () => {
         property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
         property.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredProperties(filtered);
+      setSearchedProperties(filtered);
     } else {
-      setFilteredProperties(properties);
+      setSearchedProperties(properties);
     }
   }, [searchQuery, properties]);
 
@@ -781,7 +806,7 @@ const RentalLayout: React.FC = () => {
       </nav>
 
       <main>
-        <PropertyGrid />
+        <PropertyGrid properties={searchedProperties} />
       </main>
 
       <footer className="bg-white border-t border-emerald-100 mt-16">
