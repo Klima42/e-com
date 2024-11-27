@@ -718,43 +718,7 @@ interface GuestCount {
   infants: number;
 }
 
-// Sample data
-const sampleProperties: Property[] = [
-  {
-    id: 1,
-    price: 150,
-    image: "/api/placeholder/400/300",
-    title: "Cozy Beach House",
-    location: "Malibu, California",
-    dates: "Available all year",
-    rating: 4.8,
-    reviews: 124,
-    category: "Beach",
-    amenities: ["WiFi", "Pool", "Ocean View"],
-    maxGuests: 6,
-    bedroomCount: 3,
-    bathCount: 2,
-    instantBook: true,
-    superhost: true
-  },
-  {
-    id: 2,
-    price: 200,
-    image: "/api/placeholder/400/300",
-    title: "Mountain Retreat",
-    location: "Aspen, Colorado",
-    dates: "Winter season",
-    rating: 4.9,
-    reviews: 89,
-    category: "Mountain",
-    amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
-    maxGuests: 8,
-    bedroomCount: 4,
-    bathCount: 3,
-    instantBook: false,
-    superhost: true
-  }
-];
+
 
 const RentalLayout: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
