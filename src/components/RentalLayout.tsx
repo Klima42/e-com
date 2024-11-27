@@ -710,6 +710,68 @@ const PropertyGrid: React.FC<PropertyGridProps> = ({ properties }) => {
   );
 };
 
+// Define only the types we need
+interface Property {
+  id: number;
+  price: number;
+  image: string;
+  title: string;
+  location: string;
+  dates: string;
+  rating: number;
+  reviews: number;
+  category: string;
+  amenities: string[];
+  maxGuests: number;
+  bedroomCount: number;
+  bathCount: number;
+  instantBook: boolean;
+  superhost: boolean;
+}
+
+interface GuestCount {
+  adults: number;
+  children: number;
+  infants: number;
+}
+
+// Sample data
+const sampleProperties: Property[] = [
+  {
+    id: 1,
+    price: 150,
+    image: "/api/placeholder/400/300",
+    title: "Cozy Beach House",
+    location: "Malibu, California",
+    dates: "Available all year",
+    rating: 4.8,
+    reviews: 124,
+    category: "Beach",
+    amenities: ["WiFi", "Pool", "Ocean View"],
+    maxGuests: 6,
+    bedroomCount: 3,
+    bathCount: 2,
+    instantBook: true,
+    superhost: true
+  },
+  {
+    id: 2,
+    price: 200,
+    image: "/api/placeholder/400/300",
+    title: "Mountain Retreat",
+    location: "Aspen, Colorado",
+    dates: "Winter season",
+    rating: 4.9,
+    reviews: 89,
+    category: "Mountain",
+    amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
+    maxGuests: 8,
+    bedroomCount: 4,
+    bathCount: 3,
+    instantBook: false,
+    superhost: true
+  }
+];
 
 const RentalLayout: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
@@ -757,9 +819,8 @@ const RentalLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
-      {/* Navigation Bar - Full width with centered content */}
       <nav className="w-full bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-50">
-        <div className="w-[95%] mx-auto"> {/* Changed from max-w-7xl to w-[95%] */}
+        <div className="w-[95%] mx-auto">
           <div className="w-full flex items-center justify-between py-4">
             <div className="text-2xl font-bold text-emerald-600 cursor-pointer hover:text-emerald-700 transition-colors">
               StayScape
@@ -814,16 +875,14 @@ const RentalLayout: React.FC = () => {
         </div>
       </nav>
 
-      {/* Main Content - Full width */}
       <main className="w-full">
-        <div className="w-[95%] mx-auto"> {/* Changed from max-w-7xl to w-[95%] */}
+        <div className="w-[95%] mx-auto">
           <PropertyGrid properties={searchedProperties} />
         </div>
       </main>
 
-      {/* Footer - Full width with centered content */}
       <footer className="bg-white border-t border-emerald-100 mt-16">
-        <div className="w-[95%] mx-auto py-8"> {/* Changed from max-w-7xl to w-[95%] */}
+        <div className="w-[95%] mx-auto py-8">
           <div className="text-center text-sm text-emerald-600">
             © 2024 StayScape. All rights reserved.
           </div>
