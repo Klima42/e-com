@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Heart, 
@@ -6,32 +5,30 @@ import {
   MapPin, 
   Star, 
   X, 
-  ChevronLeft, 
-  ChevronRight,
-  Users,
-  Calendar,
   Sliders,
   Menu,
   Home
 } from 'lucide-react';
 
+interface Property {
+  id: number;
+  price: number;
+  image: string;
+  title: string;
+  location: string;
+  rating: number;
+  superhost: boolean;
+}
+
 // Sample properties data
-const sampleProperties = [
+const sampleProperties: Property[] = [
   {
     id: 1,
     price: 150,
     image: "/api/placeholder/400/300",
     title: "Cozy Beach House",
     location: "Malibu, California",
-    dates: "Available all year",
     rating: 4.8,
-    reviews: 124,
-    category: "Beach",
-    amenities: ["WiFi", "Pool", "Ocean View"],
-    maxGuests: 6,
-    bedroomCount: 3,
-    bathCount: 2,
-    instantBook: true,
     superhost: true
   },
   {
@@ -40,15 +37,7 @@ const sampleProperties = [
     image: "/api/placeholder/400/300",
     title: "Mountain Retreat",
     location: "Aspen, Colorado",
-    dates: "Winter season",
     rating: 4.9,
-    reviews: 89,
-    category: "Mountain",
-    amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
-    maxGuests: 8,
-    bedroomCount: 4,
-    bathCount: 3,
-    instantBook: false,
     superhost: true
   },
   {
@@ -57,15 +46,7 @@ const sampleProperties = [
     image: "/api/placeholder/400/300",
     title: "Downtown Loft",
     location: "New York City",
-    dates: "Available all year",
     rating: 4.7,
-    reviews: 156,
-    category: "City",
-    amenities: ["WiFi", "Gym", "Doorman"],
-    maxGuests: 4,
-    bedroomCount: 2,
-    bathCount: 2,
-    instantBook: true,
     superhost: false
   },
   {
@@ -74,21 +55,17 @@ const sampleProperties = [
     image: "/api/placeholder/400/300",
     title: "Lakefront Cabin",
     location: "Lake Tahoe",
-    dates: "Summer season",
     rating: 4.6,
-    reviews: 78,
-    category: "Lake",
-    amenities: ["Dock", "Kayaks", "BBQ"],
-    maxGuests: 6,
-    bedroomCount: 3,
-    bathCount: 2,
-    instantBook: true,
     superhost: false
   }
 ];
 
 // PropertyCard Component
-const PropertyCard = ({ property }) => {
+interface PropertyCardProps {
+  property: Property;
+}
+
+const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
@@ -145,19 +122,10 @@ const PropertyCard = ({ property }) => {
 const ResponsiveRentalLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearch, setIsMobileSearch] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showGuestSelector, setShowGuestSelector] = useState(false);
-  const [selectedDates, setSelectedDates] = useState([]);
-  const [guestCount, setGuestCount] = useState({
-    adults: 1,
-    children: 0,
-    infants: 0
-  });
-
-  const [properties] = useState(sampleProperties);
   const [searchQuery, setSearchQuery] = useState("");
+  const [properties] = useState<Property[]>(sampleProperties);
 
-  const handleSearch = (query) => {
+  const handleSearch = (query: string) => {
     setSearchQuery(query);
     setIsMobileSearch(false);
   };
