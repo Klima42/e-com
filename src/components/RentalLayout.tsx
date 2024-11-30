@@ -7,7 +7,8 @@ import {
   Star, 
   X, 
   Menu,
-  Home
+  Home,
+  LucideIcon
 } from 'lucide-react';
 
 interface Property {
@@ -35,7 +36,7 @@ interface FooterSection {
 }
 
 interface NavItem {
-  icon: FC;
+  icon: LucideIcon;
   label: string;
 }
 
