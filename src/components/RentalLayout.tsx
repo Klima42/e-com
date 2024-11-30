@@ -2,22 +2,68 @@ import { useState, useEffect, FC } from 'react';
 import { 
   Search, 
   Heart, 
-  User, 
-  MapPin, 
-  Star, 
-  X, 
+  User,
   Menu,
   Home,
   LucideIcon
 } from 'lucide-react';
 
-// ... (keeping all interfaces the same)
+// Interfaces
+interface Property {
+  id: number;
+  title: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  amenities: string[];
+  maxGuests: number;
+  bedroomCount: number;
+  bathCount: number;
+  superhost: boolean;
+}
 
-const StayScape: FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobileSearch, setIsMobileSearch] = useState(false);
+interface NavItem {
+  icon: LucideIcon;
+  label: string;
+}
+
+// Sample data
+const sampleProperties: Property[] = [
+  {
+    id: 1,
+    title: "Cozy Beach House",
+    location: "Malibu, California",
+    price: 150,
+    rating: 4.8,
+    reviews: 124,
+    image: "/api/placeholder/400/300",
+    amenities: ["WiFi", "Pool", "Ocean View"],
+    maxGuests: 6,
+    bedroomCount: 3,
+    bathCount: 2,
+    superhost: true
+  },
+  {
+    id: 2,
+    title: "Mountain Retreat",
+    location: "Aspen, Colorado",
+    price: 200,
+    rating: 4.9,
+    reviews: 89,
+    image: "/api/placeholder/400/300",
+    amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
+    maxGuests: 8,
+    bedroomCount: 4,
+    bathCount: 3,
+    superhost: false
+  }
+];
+
+const RentalLayout: FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProperties, setFilteredProperties] = useState(sampleProperties);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>(sampleProperties);
 
   useEffect(() => {
     const filtered = sampleProperties.filter(property => 
@@ -28,67 +74,13 @@ const StayScape: FC = () => {
   }, [searchQuery]);
 
   const filters = ['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'];
+
   const mobileNavItems: NavItem[] = [
     { icon: Home, label: 'Home' },
     { icon: Search, label: 'Search' },
     { icon: Heart, label: 'Saved' },
     { icon: User, label: 'Profile' }
   ];
-
-  // Mobile menu component
-  const MobileMenu = () => (
-    <div className={`
-      fixed inset-0 bg-white z-50 transform transition-transform duration-300
-      ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
-    `}>
-      <div className="p-4">
-        <button 
-          onClick={() => setIsMobileMenuOpen(false)}
-          className="p-2 hover:bg-emerald-50 rounded-full"
-        >
-          <X className="h-6 w-6 text-gray-600" />
-        </button>
-        <nav className="mt-8 space-y-4">
-          {mobileNavItems.map(({ icon: Icon, label }) => (
-            <button 
-              key={label}
-              className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg flex items-center gap-3"
-            >
-              <Icon className="h-5 w-5 text-emerald-600" />
-              {label}
-            </button>
-          ))}
-        </nav>
-      </div>
-    </div>
-  );
-
-  // Mobile search component
-  const MobileSearch = () => (
-    <div className={`
-      fixed inset-0 bg-white z-40 transform transition-transform duration-300
-      ${isMobileSearch ? 'translate-y-0' : '-translate-y-full'}
-    `}>
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <button 
-            onClick={() => setIsMobileSearch(false)}
-            className="p-2 hover:bg-emerald-50 rounded-full"
-          >
-            <X className="h-6 w-6 text-gray-600" />
-          </button>
-          <span className="font-medium">Search</span>
-        </div>
-        <input
-          type="text"
-          placeholder="Where to?"
-          className="w-full p-4 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          onChange={(e) => setSearchQuery(e.target.value)}
-          value={searchQuery}
-        />
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,26 +109,16 @@ const StayScape: FC = () => {
             </div>
 
             <div className="flex md:hidden items-center gap-4">
-              <button 
-                onClick={() => setIsMobileSearch(true)}
-                className="p-2 hover:bg-emerald-50 rounded-full"
-              >
+              <button className="p-2 hover:bg-emerald-50 rounded-full">
                 <Search className="h-5 w-5 text-emerald-600" />
               </button>
-              <button 
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2 hover:bg-emerald-50 rounded-full"
-              >
+              <button className="p-2 hover:bg-emerald-50 rounded-full">
                 <Menu className="h-5 w-5 text-emerald-600" />
               </button>
             </div>
           </div>
         </div>
       </nav>
-
-      {/* Mobile Components */}
-      <MobileMenu />
-      <MobileSearch />
 
       <main className="max-w-[2000px] mx-auto px-4 py-6">
         <div className="mb-6 overflow-x-auto">
@@ -154,7 +136,59 @@ const StayScape: FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProperties.map(property => (
-            <PropertyCard key={property.id} property={property} />
+            <div key={property.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={property.image} 
+                  alt={property.title}
+                  className="w-full h-full object-cover rounded-t-xl"
+                />
+                <button className="absolute top-3 right-3 p-2 rounded-full bg-white shadow-md hover:scale-110 transition-transform">
+                  <Heart className="h-5 w-5 text-gray-600" />
+                </button>
+                {property.superhost && (
+                  <div className="absolute top-3 left-3 px-3 py-1 bg-emerald-600 text-white text-xs font-medium rounded-full">
+                    Superhost
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-semibold text-lg text-emerald-800 truncate">
+                      {property.title}
+                    </h3>
+                    <div className="text-emerald-600 text-sm">
+                      {property.location}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 my-2">
+                  {property.amenities.slice(0, 3).map((amenity, index) => (
+                    <span 
+                      key={index}
+                      className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-full"
+                    >
+                      {amenity}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-baseline justify-between">
+                  <div>
+                    <span className="text-lg font-semibold text-emerald-800">
+                      ${property.price}
+                    </span>
+                    <span className="text-emerald-600 ml-1">/ night</span>
+                  </div>
+                  <span className="text-sm text-emerald-600">
+                    {property.reviews} reviews
+                  </span>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </main>
@@ -162,7 +196,13 @@ const StayScape: FC = () => {
       <footer className="bg-white border-t border-emerald-100 mt-12">
         <div className="max-w-[2000px] mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Footer content remains the same */}
+            <div>
+              <h3 className="font-semibold mb-4">Help</h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Help Center</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Support</p>
+              </div>
+            </div>
           </div>
           <div className="mt-8 pt-8 border-t border-emerald-100 text-center text-sm text-emerald-600">
             © 2024 StayScape. All rights reserved.
@@ -184,4 +224,4 @@ const StayScape: FC = () => {
   );
 };
 
-export default StayScape;
+export default RentalLayout;
