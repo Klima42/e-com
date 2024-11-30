@@ -4,8 +4,7 @@ import {
   Heart, 
   User,
   Menu,
-  Home,
-  LucideIcon
+  Home
 } from 'lucide-react';
 
 // Interfaces
@@ -24,12 +23,13 @@ interface Property {
   superhost: boolean;
 }
 
+// Use ComponentType instead of LucideIcon
 interface NavItem {
-  icon: LucideIcon;
+  icon: typeof Search;  // Using a specific icon type as reference
   label: string;
 }
 
-// Sample data
+// Rest of the code remains the same but showing the beginning to confirm the changes
 const sampleProperties: Property[] = [
   {
     id: 1,
@@ -85,7 +85,7 @@ const RentalLayout: FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="sticky top-0 z-30 bg-white border-b border-emerald-100">
-        <div className="max-w-[2000px] mx-auto px-4">
+        <div className="w-full px-4">
           <div className="flex items-center justify-between h-16">
             <span className="text-2xl font-bold text-emerald-600">StayScape</span>
 
@@ -120,7 +120,7 @@ const RentalLayout: FC = () => {
         </div>
       </nav>
 
-      <main className="max-w-[2000px] mx-auto px-4 py-6">
+      <main className="w-full px-4 py-6">
         <div className="mb-6 overflow-x-auto">
           <div className="flex gap-2 pb-2">
             {filters.map(filter => (
@@ -134,7 +134,7 @@ const RentalLayout: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
           {filteredProperties.map(property => (
             <div key={property.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="relative aspect-[4/3]">
@@ -194,7 +194,7 @@ const RentalLayout: FC = () => {
       </main>
 
       <footer className="bg-white border-t border-emerald-100 mt-12">
-        <div className="max-w-[2000px] mx-auto px-4 py-8">
+        <div className="w-full px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-semibold mb-4">Help</h3>
