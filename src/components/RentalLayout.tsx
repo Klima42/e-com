@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Heart, 
@@ -5,11 +6,16 @@ import {
   MapPin, 
   Star, 
   X, 
+  ChevronLeft, 
+  ChevronRight,
+  Users,
+  Calendar,
   Sliders,
   Menu,
   Home
 } from 'lucide-react';
 
+// Property interface
 interface Property {
   id: number;
   price: number;
@@ -17,10 +23,15 @@ interface Property {
   title: string;
   location: string;
   rating: number;
+  reviews: number;
+  amenities: string[];
+  bedroomCount: number;
+  bathCount: number;
+  maxGuests: number;
   superhost: boolean;
 }
 
-// Sample properties data
+// Sample data
 const sampleProperties: Property[] = [
   {
     id: 1,
@@ -29,6 +40,11 @@ const sampleProperties: Property[] = [
     title: "Cozy Beach House",
     location: "Malibu, California",
     rating: 4.8,
+    reviews: 124,
+    amenities: ["WiFi", "Pool", "Ocean View"],
+    bedroomCount: 3,
+    bathCount: 2,
+    maxGuests: 6,
     superhost: true
   },
   {
@@ -38,7 +54,12 @@ const sampleProperties: Property[] = [
     title: "Mountain Retreat",
     location: "Aspen, Colorado",
     rating: 4.9,
-    superhost: true
+    reviews: 89,
+    amenities: ["Fireplace", "Hot Tub", "Ski-in/Ski-out"],
+    bedroomCount: 4,
+    bathCount: 3,
+    maxGuests: 8,
+    superhost: false
   },
   {
     id: 3,
@@ -47,7 +68,12 @@ const sampleProperties: Property[] = [
     title: "Downtown Loft",
     location: "New York City",
     rating: 4.7,
-    superhost: false
+    reviews: 156,
+    amenities: ["WiFi", "Gym", "Doorman"],
+    bedroomCount: 2,
+    bathCount: 2,
+    maxGuests: 4,
+    superhost: true
   },
   {
     id: 4,
@@ -56,33 +82,32 @@ const sampleProperties: Property[] = [
     title: "Lakefront Cabin",
     location: "Lake Tahoe",
     rating: 4.6,
+    reviews: 78,
+    amenities: ["Dock", "Kayaks", "BBQ"],
+    bedroomCount: 3,
+    bathCount: 2,
+    maxGuests: 6,
     superhost: false
   }
 ];
 
-// PropertyCard Component
-interface PropertyCardProps {
-  property: Property;
-}
-
-const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
+// Property Card Component
+const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
-    <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl bg-white">
+    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
       <div className="relative aspect-[4/3]">
         <img 
           src={property.image} 
           alt={property.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-t-xl"
         />
         <button 
           onClick={() => setIsFavorite(!isFavorite)}
           className="absolute top-3 right-3 p-2 rounded-full bg-white shadow-md hover:scale-110 transition-transform"
         >
-          <Heart 
-            className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
-          />
+          <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
         </button>
         {property.superhost && (
           <div className="absolute top-3 left-3 px-3 py-1 bg-emerald-600 text-white text-xs font-medium rounded-full">
@@ -108,11 +133,27 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           </div>
         </div>
 
-        <div className="mt-4 flex items-baseline">
-          <span className="text-lg font-semibold text-emerald-800">
-            ${property.price}
+        <div className="flex flex-wrap gap-2 my-2">
+          {property.amenities.slice(0, 3).map((amenity, index) => (
+            <span 
+              key={index}
+              className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-full"
+            >
+              {amenity}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-4 flex items-baseline justify-between">
+          <div>
+            <span className="text-lg font-semibold text-emerald-800">
+              ${property.price}
+            </span>
+            <span className="text-emerald-600 ml-1">/ night</span>
+          </div>
+          <span className="text-sm text-emerald-600">
+            {property.reviews} reviews
           </span>
-          <span className="text-emerald-600 ml-1">/ night</span>
         </div>
       </div>
     </div>
@@ -122,13 +163,17 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
 const ResponsiveRentalLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearch, setIsMobileSearch] = useState(false);
+  const [properties] = useState(sampleProperties);
   const [searchQuery, setSearchQuery] = useState("");
-  const [properties] = useState<Property[]>(sampleProperties);
+  const [filteredProperties, setFilteredProperties] = useState(properties);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setIsMobileSearch(false);
-  };
+  useEffect(() => {
+    const filtered = properties.filter(property => 
+      property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      property.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProperties(filtered);
+  }, [searchQuery, properties]);
 
   const MobileMenu = () => (
     <div className={`
@@ -142,14 +187,20 @@ const ResponsiveRentalLayout = () => {
         >
           <X className="h-6 w-6" />
         </button>
-        <div className="mt-8 space-y-6">
-          <button className="w-full py-3 text-left px-4 hover:bg-emerald-50 rounded-lg">
+        <nav className="mt-8 space-y-4">
+          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
+            Home
+          </button>
+          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
+            Search
+          </button>
+          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
+            Saved
+          </button>
+          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
             List your property
           </button>
-          <button className="w-full py-3 text-left px-4 hover:bg-emerald-50 rounded-lg">
-            Sign in
-          </button>
-        </div>
+        </nav>
       </div>
     </div>
   );
@@ -173,7 +224,7 @@ const ResponsiveRentalLayout = () => {
           type="text"
           placeholder="Where to?"
           className="w-full p-4 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
     </div>
@@ -182,25 +233,25 @@ const ResponsiveRentalLayout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
       {/* Navigation */}
-      <nav className="w-full bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-30">
+      <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-emerald-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo - Always visible */}
+            {/* Logo */}
             <div className="flex-shrink-0 text-2xl font-bold text-emerald-600">
               StayScape
             </div>
 
-            {/* Desktop Search Bar - Hidden on mobile */}
+            {/* Desktop Search */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-4">
-              <button 
-                onClick={() => setIsMobileSearch(true)}
-                className="w-full px-6 py-2 rounded-full border border-emerald-200 text-left text-emerald-600 hover:border-emerald-300"
-              >
-                Where to?
-              </button>
+              <input
+                type="text"
+                placeholder="Search destinations..."
+                className="w-full px-6 py-2 rounded-full border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
 
-            {/* Desktop Navigation - Hidden on mobile */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
               <button className="px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-full">
                 List your property
@@ -210,7 +261,7 @@ const ResponsiveRentalLayout = () => {
               </button>
             </div>
 
-            {/* Mobile Navigation Controls - Visible only on mobile */}
+            {/* Mobile Navigation Controls */}
             <div className="flex md:hidden items-center gap-4">
               <button 
                 onClick={() => setIsMobileSearch(true)}
@@ -234,81 +285,70 @@ const ResponsiveRentalLayout = () => {
       <MobileSearch />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4">
-        <div className="py-6">
-          {/* Filters Bar - Responsive */}
-          <div className="flex justify-between items-center mb-6 overflow-x-auto">
-            <div className="flex gap-2 pb-2">
-              {['Beach', 'Mountain', 'City', 'Lake'].map(filter => (
-                <button
-                  key={filter}
-                  className="px-4 py-2 text-sm whitespace-nowrap rounded-full border border-emerald-200 hover:border-emerald-300"
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-            <button className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200">
-              <Sliders className="h-4 w-4" />
-              <span className="hidden sm:inline">Filters</span>
-            </button>
-          </div>
-
-          {/* Property Grid - Responsive */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-            {properties.map(property => (
-              <div key={property.id} className="break-inside-avoid">
-                <PropertyCard property={property} />
-              </div>
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        {/* Filters - Scrollable on mobile */}
+        <div className="mb-6 overflow-x-auto">
+          <div className="flex gap-2 pb-2">
+            {['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'].map(filter => (
+              <button
+                key={filter}
+                className="px-4 py-2 text-sm whitespace-nowrap rounded-full border border-emerald-200 hover:border-emerald-300"
+              >
+                {filter}
+              </button>
             ))}
           </div>
         </div>
+
+        {/* Property Grid - Responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          {filteredProperties.map(property => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
       </main>
 
-      {/* Footer - Responsive */}
+      {/* Footer */}
       <footer className="bg-white border-t border-emerald-100 mt-16">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <div className="space-y-2 text-sm">
-                <p>Help Center</p>
-                <p>Safety Information</p>
-                <p>Cancellation Options</p>
+            {[
+              {
+                title: 'Support',
+                links: ['Help Center', 'Safety Information', 'Cancellation Options']
+              },
+              {
+                title: 'Community',
+                links: ['Blog', 'Forum', 'Events']
+              },
+              {
+                title: 'Hosting',
+                links: ['List Your Property', 'Host Resources', 'Community Forum']
+              },
+              {
+                title: 'About',
+                links: ['Our Story', 'Careers', 'Press']
+              }
+            ].map(section => (
+              <div key={section.title}>
+                <h3 className="font-semibold mb-4">{section.title}</h3>
+                <div className="space-y-2 text-sm">
+                  {section.links.map(link => (
+                    <p key={link} className="text-emerald-600 hover:text-emerald-700 cursor-pointer">
+                      {link}
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Community</h3>
-              <div className="space-y-2 text-sm">
-                <p>Blog</p>
-                <p>Forum</p>
-                <p>Events</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Hosting</h3>
-              <div className="space-y-2 text-sm">
-                <p>List Your Property</p>
-                <p>Host Resources</p>
-                <p>Community Forum</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">About</h3>
-              <div className="space-y-2 text-sm">
-                <p>Our Story</p>
-                <p>Careers</p>
-                <p>Press</p>
-              </div>
-            </div>
+            ))}
           </div>
-          <div className="mt-8 pt-8 border-t border-emerald-100 text-center text-sm">
+          <div className="mt-8 pt-8 border-t border-emerald-100 text-center text-sm text-emerald-600">
             © 2024 StayScape. All rights reserved.
           </div>
         </div>
       </footer>
 
-      {/* Mobile Bottom Navigation - Fixed at bottom on mobile */}
+      {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-emerald-100 md:hidden">
         <div className="grid grid-cols-4 py-2">
           {[
