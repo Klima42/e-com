@@ -57,6 +57,34 @@ const sampleProperties: Property[] = [
     bathCount: 3,
     maxGuests: 8,
     superhost: false
+  },
+  {
+    id: 3,
+    price: 175,
+    image: "/api/placeholder/400/300",
+    title: "Downtown Loft",
+    location: "New York City",
+    rating: 4.7,
+    reviews: 156,
+    amenities: ["WiFi", "Gym", "Doorman"],
+    bedroomCount: 2,
+    bathCount: 2,
+    maxGuests: 4,
+    superhost: true
+  },
+  {
+    id: 4,
+    price: 120,
+    image: "/api/placeholder/400/300",
+    title: "Lakefront Cabin",
+    location: "Lake Tahoe",
+    rating: 4.6,
+    reviews: 78,
+    amenities: ["Dock", "Kayaks", "BBQ"],
+    bedroomCount: 3,
+    bathCount: 2,
+    maxGuests: 6,
+    superhost: false
   }
 ];
 
@@ -227,8 +255,8 @@ const ResponsiveRentalLayout: FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
-      <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-emerald-100">
-        <div className="max-w-7xl mx-auto px-4">
+      <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-emerald-100 w-full">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 text-2xl font-bold text-emerald-600">
               StayScape
@@ -273,9 +301,9 @@ const ResponsiveRentalLayout: FC = () => {
       <MobileMenu />
       <MobileSearch />
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="mb-6 overflow-x-auto">
-          <div className="flex gap-2 pb-2">
+          <div className="flex gap-2 pb-2 min-w-max">
             {filters.map(filter => (
               <button
                 key={filter}
@@ -287,15 +315,15 @@ const ResponsiveRentalLayout: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
           {filteredProperties.map(property => (
             <PropertyCard key={property.id} property={property} />
           ))}
         </div>
       </main>
 
-      <footer className="bg-white border-t border-emerald-100 mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+      <footer className="bg-white border-t border-emerald-100 mt-16 w-full">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {footerSections.map(section => (
               <div key={section.title}>
