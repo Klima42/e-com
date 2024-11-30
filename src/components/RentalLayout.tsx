@@ -3,11 +3,9 @@ import {
   Search, 
   Heart, 
   User,
-  Menu,
-  Home
+  Menu
 } from 'lucide-react';
 
-// Interfaces remain the same
 interface Property {
   id: number;
   title: string;
@@ -21,11 +19,6 @@ interface Property {
   bedroomCount: number;
   bathCount: number;
   superhost: boolean;
-}
-
-interface NavItem {
-  icon: typeof Search;
-  label: string;
 }
 
 const sampleProperties: Property[] = [
@@ -73,13 +66,6 @@ const RentalLayout: FC = () => {
 
   const filters = ['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'];
 
-  const mobileNavItems: NavItem[] = [
-    { icon: Home, label: 'Home' },
-    { icon: Search, label: 'Search' },
-    { icon: Heart, label: 'Saved' },
-    { icon: User, label: 'Profile' }
-  ];
-
   return (
     <div className="min-h-screen bg-white">
       <nav className="sticky top-0 z-30 bg-white border-b border-gray-100">
@@ -92,7 +78,7 @@ const RentalLayout: FC = () => {
                 <input
                   type="text"
                   placeholder="Search destinations..."
-                  className="w-full px-6 py-2 pl-12 rounded-full bg-black text-white placeholder-gray-400"
+                  className="w-full px-6 py-2 pl-12 rounded-full bg-gray-50 border border-gray-200"
                   onChange={(e) => setSearchQuery(e.target.value)}
                   value={searchQuery}
                 />
@@ -104,7 +90,7 @@ const RentalLayout: FC = () => {
               <button className="px-4 py-2 text-sm font-medium text-emerald-500 hover:bg-emerald-50 rounded-full">
                 List your property
               </button>
-              <button className="p-2 bg-black text-white rounded-full">
+              <button className="p-2 hover:bg-gray-100 rounded-full">
                 <User className="h-5 w-5" />
               </button>
             </div>
@@ -127,7 +113,7 @@ const RentalLayout: FC = () => {
             {filters.map(filter => (
               <button
                 key={filter}
-                className="px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full bg-black text-white hover:bg-gray-900"
+                className="px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full border border-gray-200 hover:border-gray-300"
               >
                 {filter}
               </button>
