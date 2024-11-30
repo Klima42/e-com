@@ -256,7 +256,7 @@ const ResponsiveRentalLayout: FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
       <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-emerald-100 w-full">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-[95%] max-w-[2000px] mx-auto">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 text-2xl font-bold text-emerald-600">
               StayScape
@@ -301,7 +301,7 @@ const ResponsiveRentalLayout: FC = () => {
       <MobileMenu />
       <MobileSearch />
 
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="w-[95%] max-w-[2000px] mx-auto py-6">
         <div className="mb-6 overflow-x-auto">
           <div className="flex gap-2 pb-2 min-w-max">
             {filters.map(filter => (
@@ -315,7 +315,7 @@ const ResponsiveRentalLayout: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredProperties.map(property => (
             <PropertyCard key={property.id} property={property} />
           ))}
@@ -323,7 +323,7 @@ const ResponsiveRentalLayout: FC = () => {
       </main>
 
       <footer className="bg-white border-t border-emerald-100 mt-16 w-full">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-[95%] max-w-[2000px] mx-auto py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {footerSections.map(section => (
               <div key={section.title}>
