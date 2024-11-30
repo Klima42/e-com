@@ -30,11 +30,6 @@ interface PropertyCardProps {
   property: Property;
 }
 
-interface FooterSection {
-  title: string;
-  links: string[];
-}
-
 interface NavItem {
   icon: LucideIcon;
   label: string;
@@ -167,97 +162,25 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
   );
 };
 
-const RentalLayout: FC = () => {
+const StayScape: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearch, setIsMobileSearch] = useState(false);
-  const [properties] = useState<Property[]>(sampleProperties);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
+  const [filteredProperties, setFilteredProperties] = useState(sampleProperties);
 
+  // Filter properties based on search query
   useEffect(() => {
-    const filtered = properties.filter(property => 
+    const filtered = sampleProperties.filter(property => 
       property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
       property.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredProperties(filtered);
-  }, [searchQuery, properties]);
+  }, [searchQuery]);
 
-  const MobileMenu: FC = () => (
-    <div className={`
-      fixed inset-0 bg-white z-50 transform transition-transform duration-300
-      ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
-    `}>
-      <div className="p-4">
-        <button 
-          onClick={() => setIsMobileMenuOpen(false)}
-          className="p-2 hover:bg-emerald-50 rounded-full"
-        >
-          <X className="h-6 w-6" />
-        </button>
-        <nav className="mt-8 space-y-4">
-          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
-            Home
-          </button>
-          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
-            Search
-          </button>
-          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
-            Saved
-          </button>
-          <button className="w-full p-4 text-left hover:bg-emerald-50 rounded-lg">
-            List your property
-          </button>
-        </nav>
-      </div>
-    </div>
-  );
-
-  const MobileSearch: FC = () => (
-    <div className={`
-      fixed inset-0 bg-white z-40 transform transition-transform duration-300
-      ${isMobileSearch ? 'translate-y-0' : '-translate-y-full'}
-    `}>
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <button 
-            onClick={() => setIsMobileSearch(false)}
-            className="p-2 hover:bg-emerald-50 rounded-full"
-          >
-            <X className="h-6 w-6" />
-          </button>
-          <span className="font-medium">Search</span>
-        </div>
-        <input
-          type="text"
-          placeholder="Where to?"
-          className="w-full p-4 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-    </div>
-  );
-
+  // Filter categories
   const filters = ['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'];
-  
-  const footerSections: FooterSection[] = [
-    {
-      title: 'Support',
-      links: ['Help Center', 'Safety Information', 'Cancellation Options']
-    },
-    {
-      title: 'Community',
-      links: ['Blog', 'Forum', 'Events']
-    },
-    {
-      title: 'Hosting',
-      links: ['List Your Property', 'Host Resources', 'Community Forum']
-    },
-    {
-      title: 'About',
-      links: ['Our Story', 'Careers', 'Press']
-    }
-  ];
 
+  // Mobile navigation items
   const mobileNavItems: NavItem[] = [
     { icon: Home, label: 'Home' },
     { icon: Search, label: 'Search' },
@@ -266,13 +189,12 @@ const RentalLayout: FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-emerald-100">
-        <div className="w-[95%] max-w-[2000px] mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-30 bg-white border-b border-emerald-100">
+        <div className="max-w-[2000px] mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <div className="flex-shrink-0 text-2xl font-bold text-emerald-600">
-              StayScape
-            </div>
+            <span className="text-2xl font-bold text-emerald-600">StayScape</span>
 
             <div className="hidden md:flex flex-1 max-w-2xl mx-4">
               <input
@@ -293,16 +215,10 @@ const RentalLayout: FC = () => {
             </div>
 
             <div className="flex md:hidden items-center gap-4">
-              <button 
-                onClick={() => setIsMobileSearch(true)}
-                className="p-2 hover:bg-emerald-50 rounded-full"
-              >
+              <button onClick={() => setIsMobileSearch(true)}>
                 <Search className="h-5 w-5 text-emerald-600" />
               </button>
-              <button 
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2 hover:bg-emerald-50 rounded-full"
-              >
+              <button onClick={() => setIsMobileMenuOpen(true)}>
                 <Menu className="h-5 w-5 text-emerald-600" />
               </button>
             </div>
@@ -310,12 +226,11 @@ const RentalLayout: FC = () => {
         </div>
       </nav>
 
-      <MobileMenu />
-      <MobileSearch />
-
-      <main className="flex-grow w-[95%] max-w-[2000px] mx-auto py-6">
+      {/* Main Content */}
+      <main className="max-w-[2000px] mx-auto px-4 py-6">
+        {/* Filters */}
         <div className="mb-6 overflow-x-auto">
-          <div className="flex gap-2 pb-2 min-w-max">
+          <div className="flex gap-2 pb-2">
             {filters.map(filter => (
               <button
                 key={filter}
@@ -327,28 +242,50 @@ const RentalLayout: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {/* Property Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProperties.map(property => (
             <PropertyCard key={property.id} property={property} />
           ))}
         </div>
       </main>
 
-      <footer className="mt-auto bg-white border-t border-emerald-100 w-full">
-        <div className="w-[95%] max-w-[2000px] mx-auto py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {footerSections.map(section => (
-              <div key={section.title}>
-                <h3 className="font-semibold mb-4">{section.title}</h3>
-                <div className="space-y-2 text-sm">
-                  {section.links.map(link => (
-                    <p key={link} className="text-emerald-600 hover:text-emerald-700 cursor-pointer">
-                      {link}
-                    </p>
-                  ))}
-                </div>
+      {/* Footer */}
+      <footer className="bg-white border-t border-emerald-100 mt-12">
+        <div className="max-w-[2000px] mx-auto px-4 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="font-semibold mb-4">Support</h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Help Center</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Safety Information</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Cancellation Options</p>
               </div>
-            ))}
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Community</h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Blog</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Forum</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Events</p>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Hosting</h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">List Your Property</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Host Resources</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Community Forum</p>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">About</h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Our Story</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Careers</p>
+                <p className="text-emerald-600 hover:text-emerald-700 cursor-pointer">Press</p>
+              </div>
+            </div>
           </div>
           <div className="mt-8 pt-8 border-t border-emerald-100 text-center text-sm text-emerald-600">
             © 2024 StayScape. All rights reserved.
@@ -356,6 +293,7 @@ const RentalLayout: FC = () => {
         </div>
       </footer>
 
+      {/* Mobile Navigation Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-emerald-100 md:hidden">
         <div className="grid grid-cols-4 py-2">
           {mobileNavItems.map(({ icon: Icon, label }) => (
@@ -370,4 +308,4 @@ const RentalLayout: FC = () => {
   );
 };
 
-export default RentalLayout;
+export default StayScape;
