@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import { 
   Search, 
   Heart, 
@@ -6,16 +6,10 @@ import {
   MapPin, 
   Star, 
   X, 
-  ChevronLeft, 
-  ChevronRight,
-  Users,
-  Calendar,
-  Sliders,
   Menu,
   Home
 } from 'lucide-react';
 
-// Property interface
 interface Property {
   id: number;
   price: number;
@@ -31,7 +25,10 @@ interface Property {
   superhost: boolean;
 }
 
-// Sample data
+interface PropertyCardProps {
+  property: Property;
+}
+
 const sampleProperties: Property[] = [
   {
     id: 1,
@@ -60,39 +57,10 @@ const sampleProperties: Property[] = [
     bathCount: 3,
     maxGuests: 8,
     superhost: false
-  },
-  {
-    id: 3,
-    price: 175,
-    image: "/api/placeholder/400/300",
-    title: "Downtown Loft",
-    location: "New York City",
-    rating: 4.7,
-    reviews: 156,
-    amenities: ["WiFi", "Gym", "Doorman"],
-    bedroomCount: 2,
-    bathCount: 2,
-    maxGuests: 4,
-    superhost: true
-  },
-  {
-    id: 4,
-    price: 120,
-    image: "/api/placeholder/400/300",
-    title: "Lakefront Cabin",
-    location: "Lake Tahoe",
-    rating: 4.6,
-    reviews: 78,
-    amenities: ["Dock", "Kayaks", "BBQ"],
-    bedroomCount: 3,
-    bathCount: 2,
-    maxGuests: 6,
-    superhost: false
   }
 ];
 
-// Property Card Component
-const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
+const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   return (
@@ -160,12 +128,12 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
   );
 };
 
-const ResponsiveRentalLayout = () => {
+const ResponsiveRentalLayout: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearch, setIsMobileSearch] = useState(false);
-  const [properties] = useState(sampleProperties);
+  const [properties] = useState<Property[]>(sampleProperties);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProperties, setFilteredProperties] = useState(properties);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties);
 
   useEffect(() => {
     const filtered = properties.filter(property => 
@@ -175,7 +143,7 @@ const ResponsiveRentalLayout = () => {
     setFilteredProperties(filtered);
   }, [searchQuery, properties]);
 
-  const MobileMenu = () => (
+  const MobileMenu: FC = () => (
     <div className={`
       fixed inset-0 bg-white z-50 transform transition-transform duration-300
       ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
@@ -205,7 +173,7 @@ const ResponsiveRentalLayout = () => {
     </div>
   );
 
-  const MobileSearch = () => (
+  const MobileSearch: FC = () => (
     <div className={`
       fixed inset-0 bg-white z-40 transform transition-transform duration-300
       ${isMobileSearch ? 'translate-y-0' : '-translate-y-full'}
@@ -230,18 +198,42 @@ const ResponsiveRentalLayout = () => {
     </div>
   );
 
+  const filters = ['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'];
+  const footerSections = [
+    {
+      title: 'Support',
+      links: ['Help Center', 'Safety Information', 'Cancellation Options']
+    },
+    {
+      title: 'Community',
+      links: ['Blog', 'Forum', 'Events']
+    },
+    {
+      title: 'Hosting',
+      links: ['List Your Property', 'Host Resources', 'Community Forum']
+    },
+    {
+      title: 'About',
+      links: ['Our Story', 'Careers', 'Press']
+    }
+  ];
+
+  const mobileNavItems = [
+    { icon: Home, label: 'Home' },
+    { icon: Search, label: 'Search' },
+    { icon: Heart, label: 'Saved' },
+    { icon: User, label: 'Profile' }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50">
-      {/* Navigation */}
       <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-emerald-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
             <div className="flex-shrink-0 text-2xl font-bold text-emerald-600">
               StayScape
             </div>
 
-            {/* Desktop Search */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-4">
               <input
                 type="text"
@@ -251,7 +243,6 @@ const ResponsiveRentalLayout = () => {
               />
             </div>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
               <button className="px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-full">
                 List your property
@@ -261,7 +252,6 @@ const ResponsiveRentalLayout = () => {
               </button>
             </div>
 
-            {/* Mobile Navigation Controls */}
             <div className="flex md:hidden items-center gap-4">
               <button 
                 onClick={() => setIsMobileSearch(true)}
@@ -280,16 +270,13 @@ const ResponsiveRentalLayout = () => {
         </div>
       </nav>
 
-      {/* Mobile Menus */}
       <MobileMenu />
       <MobileSearch />
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Filters - Scrollable on mobile */}
         <div className="mb-6 overflow-x-auto">
           <div className="flex gap-2 pb-2">
-            {['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'].map(filter => (
+            {filters.map(filter => (
               <button
                 key={filter}
                 className="px-4 py-2 text-sm whitespace-nowrap rounded-full border border-emerald-200 hover:border-emerald-300"
@@ -300,7 +287,6 @@ const ResponsiveRentalLayout = () => {
           </div>
         </div>
 
-        {/* Property Grid - Responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {filteredProperties.map(property => (
             <PropertyCard key={property.id} property={property} />
@@ -308,28 +294,10 @@ const ResponsiveRentalLayout = () => {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-white border-t border-emerald-100 mt-16">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              {
-                title: 'Support',
-                links: ['Help Center', 'Safety Information', 'Cancellation Options']
-              },
-              {
-                title: 'Community',
-                links: ['Blog', 'Forum', 'Events']
-              },
-              {
-                title: 'Hosting',
-                links: ['List Your Property', 'Host Resources', 'Community Forum']
-              },
-              {
-                title: 'About',
-                links: ['Our Story', 'Careers', 'Press']
-              }
-            ].map(section => (
+            {footerSections.map(section => (
               <div key={section.title}>
                 <h3 className="font-semibold mb-4">{section.title}</h3>
                 <div className="space-y-2 text-sm">
@@ -348,15 +316,9 @@ const ResponsiveRentalLayout = () => {
         </div>
       </footer>
 
-      {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-emerald-100 md:hidden">
         <div className="grid grid-cols-4 py-2">
-          {[
-            { icon: Home, label: 'Home' },
-            { icon: Search, label: 'Search' },
-            { icon: Heart, label: 'Saved' },
-            { icon: User, label: 'Profile' }
-          ].map(({ icon: Icon, label }) => (
+          {mobileNavItems.map(({ icon: Icon, label }) => (
             <button key={label} className="flex flex-col items-center p-2">
               <Icon className="h-6 w-6 text-emerald-600" />
               <span className="text-xs mt-1">{label}</span>
