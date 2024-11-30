@@ -67,8 +67,8 @@ const RentalLayout: FC = () => {
   const filters = ['Beach', 'Mountain', 'City', 'Lake', 'Countryside', 'Desert'];
 
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="sticky top-0 z-30 bg-white border-b border-gray-100">
+    <div className="w-screen min-h-screen bg-white">
+      <nav className="sticky top-0 z-30 bg-white border-b border-gray-100 w-full">
         <div className="w-full px-4">
           <div className="flex items-center justify-between h-16">
             <span className="text-2xl font-bold text-emerald-600">StayScape</span>
@@ -121,7 +121,7 @@ const RentalLayout: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-6">
           {filteredProperties.map(property => (
             <div key={property.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="relative aspect-[4/3]">
