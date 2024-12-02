@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { DatePickerProps, DateRange } from './types';
 
-const DatePicker = ({ onSelect, onClose }) => {
-  const [selectedRange, setSelectedRange] = useState({ start: null, end: null });
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+const DatePicker: React.FC<DatePickerProps> = ({ onSelect, onClose }) => {
+  const [selectedRange, setSelectedRange] = useState<DateRange>({ start: null, end: null });
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
-  const generateCalendarDays = (year, month) => {
+  const generateCalendarDays = (year: number, month: number): (Date | null)[] => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const days = [];
+    const days: (Date | null)[] = [];
     
     for (let i = 0; i < firstDay.getDay(); i++) {
       days.push(null);
@@ -20,7 +21,7 @@ const DatePicker = ({ onSelect, onClose }) => {
     return days;
   };
 
-  const handleDateSelect = (date) => {
+  const handleDateSelect = (date: Date) => {
     if (!selectedRange.start || (selectedRange.start && selectedRange.end)) {
       setSelectedRange({ start: date, end: null });
     } else {
@@ -32,20 +33,23 @@ const DatePicker = ({ onSelect, onClose }) => {
     }
   };
 
-  const navigateMonth = (direction) => {
+  const navigateMonth = (direction: number) => {
     setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + direction)));
   };
 
-  const isDateSelected = (date) => {
+  const isDateSelected = (date: Date | null): boolean => {
     if (!date || !selectedRange.start) return false;
     if (!selectedRange.end) return date.getTime() === selectedRange.start.getTime();
     return date >= selectedRange.start && date <= selectedRange.end;
   };
 
-  const isDateInRange = (date) => {
+  const isDateInRange = (date: Date | null): boolean => {
     if (!date || !selectedRange.start || !selectedRange.end) return false;
     return date > selectedRange.start && date < selectedRange.end;
   };
+
+  // Rest of the component remains the same, just add proper types to the parameters
+  // ...
 
   const monthDays = generateCalendarDays(
     currentMonth.getFullYear(),
