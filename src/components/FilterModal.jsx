@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { FilterModalProps, FilterState } from './types';
 
-const FilterModal = ({ onApply, onClose, initialFilters }) => {
-  const [filters, setFilters] = useState(initialFilters);
+const FilterModal: React.FC<FilterModalProps> = ({ onApply, onClose, initialFilters }) => {
+  const [filters, setFilters] = useState<FilterState>(initialFilters);
   
   const amenities = [
     'WiFi', 'Pool', 'Kitchen', 'Parking', 'AC', 'Heating', 'Washer', 'Dryer',
     'Hot Tub', 'BBQ', 'Beach Access', 'Gym'
-  ];
+  ] as const;
 
-  const PriceRange = () => (
+  const PriceRange: React.FC = () => (
     <div className="space-y-4">
       <h3 className="font-medium text-emerald-800">Price Range</h3>
       <div className="flex gap-4">
@@ -17,7 +18,7 @@ const FilterModal = ({ onApply, onClose, initialFilters }) => {
           <input
             type="number"
             value={filters.priceRange[0]}
-            onChange={e => setFilters(prev => ({
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
               ...prev,
               priceRange: [parseInt(e.target.value) || 0, prev.priceRange[1]]
             }))}
@@ -29,7 +30,7 @@ const FilterModal = ({ onApply, onClose, initialFilters }) => {
           <input
             type="number"
             value={filters.priceRange[1]}
-            onChange={e => setFilters(prev => ({
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
               ...prev,
               priceRange: [prev.priceRange[0], parseInt(e.target.value) || 0]
             }))}
@@ -45,9 +46,7 @@ const FilterModal = ({ onApply, onClose, initialFilters }) => {
       <div className="bg-white p-6 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold text-emerald-800">Filters</h2>
-          <button onClick={onClose} className="text-emerald-600 hover:text-emerald-800">
-            ✕
-          </button>
+          <button onClick={onClose} className="text-emerald-600 hover:text-emerald-800">✕</button>
         </div>
 
         <div className="space-y-8">
@@ -56,12 +55,12 @@ const FilterModal = ({ onApply, onClose, initialFilters }) => {
           <div>
             <h3 className="font-medium text-emerald-800 mb-4">Amenities</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {amenities.map(amenity => (
+              {amenities.map((amenity) => (
                 <label key={amenity} className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={filters.amenities.includes(amenity)}
-                    onChange={e => setFilters(prev => ({
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
                       ...prev,
                       amenities: e.target.checked
                         ? [...prev.amenities, amenity]
@@ -80,7 +79,7 @@ const FilterModal = ({ onApply, onClose, initialFilters }) => {
               <input
                 type="checkbox"
                 checked={filters.instantBook}
-                onChange={e => setFilters(prev => ({
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
                   ...prev,
                   instantBook: e.target.checked
                 }))}
