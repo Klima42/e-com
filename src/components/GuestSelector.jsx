@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { GuestSelectorProps, GuestCounts } from './types';
 
-const GuestSelector = ({ onSelect, onClose, initialCounts = { adults: 1, children: 0, infants: 0 } }) => {
-  const [counts, setCounts] = useState(initialCounts);
+type GuestTypeControlProps = {
+  type: keyof GuestCounts;
+  label: string;
+  description: string;
+  counts: GuestCounts;
+  updateCount: (type: keyof GuestCounts, increment: number) => void;
+};
 
-  const updateCount = (type, increment) => {
+const GuestSelector: React.FC<GuestSelectorProps> = ({ onSelect, onClose, initialCounts }) => {
+  const [counts, setCounts] = useState<GuestCounts>(initialCounts);
+
+  const updateCount = (type: keyof GuestCounts, increment: number): void => {
     const newCount = counts[type] + increment;
     const totalGuests = type === 'infants' 
       ? counts.adults + counts.children 
@@ -19,7 +28,7 @@ const GuestSelector = ({ onSelect, onClose, initialCounts = { adults: 1, childre
     }));
   };
 
-  const GuestTypeControl = ({ type, label, description }) => (
+  const GuestTypeControl: React.FC<GuestTypeControlProps> = ({ type, label, description, counts, updateCount }) => (
     <div className="flex items-center justify-between py-4">
       <div>
         <h3 className="font-medium text-emerald-800">{label}</h3>
@@ -60,9 +69,7 @@ const GuestSelector = ({ onSelect, onClose, initialCounts = { adults: 1, childre
       <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-emerald-800">Guests</h2>
-          <button onClick={onClose} className="text-emerald-600 hover:text-emerald-800">
-            ✕
-          </button>
+          <button onClick={onClose} className="text-emerald-600 hover:text-emerald-800">✕</button>
         </div>
 
         <div className="divide-y divide-gray-100">
@@ -70,16 +77,22 @@ const GuestSelector = ({ onSelect, onClose, initialCounts = { adults: 1, childre
             type="adults"
             label="Adults"
             description="Ages 13 or above"
+            counts={counts}
+            updateCount={updateCount}
           />
           <GuestTypeControl
             type="children"
             label="Children"
             description="Ages 2-12"
+            counts={counts}
+            updateCount={updateCount}
           />
           <GuestTypeControl
             type="infants"
             label="Infants"
             description="Under 2"
+            counts={counts}
+            updateCount={updateCount}
           />
         </div>
 
