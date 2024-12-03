@@ -1,112 +1,136 @@
 import React, { useState } from 'react';
-import { FilterModalProps, FilterState } from './types';
+import { X } from 'lucide-react';
 
-const FilterModal: React.FC<FilterModalProps> = ({ onApply, onClose, initialFilters }) => {
-  const [filters, setFilters] = useState<FilterState>(initialFilters);
-  
-  const amenities = [
-    'WiFi', 'Pool', 'Kitchen', 'Parking', 'AC', 'Heating', 'Washer', 'Dryer',
-    'Hot Tub', 'BBQ', 'Beach Access', 'Gym'
-  ] as const;
+const FilterModal = ({ isOpen, onClose, onFilter }) => {
+  const [filters, setFilters] = useState({
+    priceRange: [0, 1000],
+    bedrooms: 1,
+    bathrooms: 1,
+    propertyTypes: []
+  });
 
-  const PriceRange: React.FC = () => (
-    <div className="space-y-4">
-      <h3 className="font-medium text-emerald-800">Price Range</h3>
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <label className="text-sm text-emerald-600">Min Price</label>
-          <input
-            type="number"
-            value={filters.priceRange[0]}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
-              ...prev,
-              priceRange: [parseInt(e.target.value) || 0, prev.priceRange[1]]
-            }))}
-            className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg"
-          />
-        </div>
-        <div className="flex-1">
-          <label className="text-sm text-emerald-600">Max Price</label>
-          <input
-            type="number"
-            value={filters.priceRange[1]}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
-              ...prev,
-              priceRange: [prev.priceRange[0], parseInt(e.target.value) || 0]
-            }))}
-            className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg"
-          />
-        </div>
-      </div>
-    </div>
-  );
+  const handleSubmit = () => {
+    onFilter(filters);
+    onClose();
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold text-emerald-800">Filters</h2>
-          <button onClick={onClose} className="text-emerald-600 hover:text-emerald-800">✕</button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-xl w-full max-w-lg mx-4 relative">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold">Filters</h2>
+          <button 
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded-full"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
-        <div className="space-y-8">
-          <PriceRange />
-
+        {/* Content */}
+        <div className="p-4 space-y-6">
+          {/* Price Range */}
           <div>
-            <h3 className="font-medium text-emerald-800 mb-4">Amenities</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {amenities.map((amenity) => (
-                <label key={amenity} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.amenities.includes(amenity)}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
-                      ...prev,
-                      amenities: e.target.checked
-                        ? [...prev.amenities, amenity]
-                        : prev.amenities.filter(a => a !== amenity)
-                    }))}
-                    className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span className="text-emerald-800">{amenity}</span>
-                </label>
-              ))}
+            <h3 className="font-medium mb-2">Price Range</h3>
+            <div className="flex gap-4">
+              <input
+                type="number"
+                value={filters.priceRange[0]}
+                onChange={(e) => setFilters({
+                  ...filters,
+                  priceRange: [parseInt(e.target.value), filters.priceRange[1]]
+                })}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Min"
+              />
+              <input
+                type="number"
+                value={filters.priceRange[1]}
+                onChange={(e) => setFilters({
+                  ...filters,
+                  priceRange: [filters.priceRange[0], parseInt(e.target.value)]
+                })}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Max"
+              />
             </div>
           </div>
 
+          {/* Rooms */}
           <div>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={filters.instantBook}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilters(prev => ({
-                  ...prev,
-                  instantBook: e.target.checked
-                }))}
-                className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-              />
-              <span className="text-emerald-800">Instant Book</span>
-            </label>
+            <h3 className="font-medium mb-2">Rooms</h3>
+            <div className="flex gap-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Bedrooms</label>
+                <input
+                  type="number"
+                  value={filters.bedrooms}
+                  onChange={(e) => setFilters({
+                    ...filters,
+                    bedrooms: parseInt(e.target.value)
+                  })}
+                  min="1"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Bathrooms</label>
+                <input
+                  type="number"
+                  value={filters.bathrooms}
+                  onChange={(e) => setFilters({
+                    ...filters,
+                    bathrooms: parseInt(e.target.value)
+                  })}
+                  min="1"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Property Types */}
+          <div>
+            <h3 className="font-medium mb-2">Property Type</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {['House', 'Apartment', 'Cabin', 'Villa'].map(type => (
+                <button
+                  key={type}
+                  onClick={() => {
+                    const types = filters.propertyTypes.includes(type)
+                      ? filters.propertyTypes.filter(t => t !== type)
+                      : [...filters.propertyTypes, type];
+                    setFilters({ ...filters, propertyTypes: types });
+                  }}
+                  className={`px-4 py-2 rounded-lg border ${
+                    filters.propertyTypes.includes(type)
+                      ? 'bg-emerald-50 border-emerald-500 text-emerald-700'
+                      : 'hover:bg-gray-50'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end gap-4 pt-4 border-t border-gray-100">
+        {/* Footer */}
+        <div className="p-4 border-t flex justify-end gap-4">
           <button
-            onClick={() => setFilters({
-              priceRange: [0, 1000],
-              propertyType: [],
-              instantBook: false,
-              amenities: []
-            })}
-            className="px-4 py-2 text-emerald-600 hover:bg-emerald-50 rounded-full"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
           >
-            Clear all
+            Cancel
           </button>
           <button
-            onClick={() => onApply(filters)}
-            className="px-6 py-2 bg-emerald-600 text-white rounded-full hover:bg-emerald-700"
+            onClick={handleSubmit}
+            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
           >
-            Show results
+            Show Results
           </button>
         </div>
       </div>

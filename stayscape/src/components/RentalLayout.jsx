@@ -1,10 +1,9 @@
-// RentalLayout.jsx
-import React, { useState, useEffect } from 'react';
-import { Search, User, Menu, Heart } from 'lucide-react';
-import PropertyCard from './PropertyCard';
-import DatePicker from './DatePicker';
-import GuestSelector from './GuestSelector';
-import FilterModal from './FilterModal';
+import React, { useState, useEffect } from "react";
+import { Search, User, Menu, Heart } from "lucide-react";
+import DatePicker from "./DatePicker.jsx";
+import GuestSelector from "./GuestSelector.jsx";
+import FilterModal from "./FilterModal.jsx";
+import PropertyCard from "./PropertyCard.jsx";
 
 const sampleProperties = [
   {
@@ -49,6 +48,7 @@ const RentalLayout = () => {
     infants: 0
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const handleFilter = (filters) => {
     const filtered = sampleProperties.filter(property => 
@@ -59,6 +59,7 @@ const RentalLayout = () => {
       (filters.propertyTypes.length === 0 || filters.propertyTypes.includes(property.type))
     );
     setProperties(filtered);
+    setIsFilterModalOpen(false);
   };
 
   useEffect(() => {
@@ -69,14 +70,16 @@ const RentalLayout = () => {
     setProperties(filtered);
   }, [searchQuery]);
 
+
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen w-screen overflow-x-hidden">
+      {/* Navbar */}
       <nav className="sticky top-0 z-30 bg-white border-b border-gray-100 w-full">
-        <div className="max-w-[2520px] mx-auto">
-          <div className="flex items-center justify-between h-16 px-4">
+        <div className="px-4 md:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-16">
             <span className="text-2xl font-bold text-emerald-600">StayScape</span>
             
-            <div className="hidden md:flex flex-1 max-w-4xl mx-4 items-center gap-4">
+            <div className="hidden md:flex flex-1 mx-4 items-center gap-4">
               <div className="relative flex-1">
                 <input
                   type="text"
@@ -89,7 +92,12 @@ const RentalLayout = () => {
               </div>
               <DatePicker onChange={setDateRange} />
               <GuestSelector onChange={setGuestCounts} />
-              <FilterModal onFilter={handleFilter} />
+              <button
+                onClick={() => setIsFilterModalOpen(true)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-full"
+              >
+                Filters
+              </button>
             </div>
 
             <div className="hidden md:flex items-center gap-4">
@@ -125,14 +133,20 @@ const RentalLayout = () => {
                 </div>
                 <DatePicker onChange={setDateRange} />
                 <GuestSelector onChange={setGuestCounts} />
-                <FilterModal onFilter={handleFilter} />
+                <button
+                  onClick={() => setIsFilterModalOpen(true)}
+                  className="w-full px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-full border"
+                >
+                  Filters
+                </button>
               </div>
             </div>
           )}
         </div>
       </nav>
 
-      <main className="flex-grow w-full max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Content */}
+      <main className="w-full px-4 md:px-8 lg:px-12 py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {properties.map(property => (
             <PropertyCard key={property.id} property={property} />
@@ -140,8 +154,9 @@ const RentalLayout = () => {
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-100 py-8">
-        <div className="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Footer */}
+      <footer className="w-full bg-white border-t border-gray-100 py-8">
+        <div className="px-4 md:px-8 lg:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-medium mb-4">Support</h3>
@@ -181,6 +196,15 @@ const RentalLayout = () => {
           </div>
         </div>
       </footer>
+
+      {/* Filter Modal */}
+      {isFilterModalOpen && (
+        <FilterModal 
+          onFilter={handleFilter} 
+          onClose={() => setIsFilterModalOpen(false)}
+          isOpen={isFilterModalOpen}
+        />
+      )}
     </div>
   );
 };
