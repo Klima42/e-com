@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, User, Menu, Heart } from "lucide-react";
+import { Search, User, Menu } from "lucide-react";
 import DatePicker from "./DatePicker.jsx";
 import GuestSelector from "./GuestSelector.jsx";
 import FilterModal from "./FilterModal.jsx";
@@ -70,14 +70,12 @@ const RentalLayout = () => {
     setProperties(filtered);
   }, [searchQuery]);
 
-
   return (
     <div className="min-h-screen w-screen overflow-x-hidden">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-30 bg-white border-b border-gray-100 w-full">
-        <div className="px-4 md:px-8 lg:px-12">
+      <nav className="sticky top-0 z-30 bg-indigo-700 border-b border-indigo-800 w-full">
+        <div className="w-full px-4 md:px-8 lg:px-12">
           <div className="flex items-center justify-between h-16">
-            <span className="text-2xl font-bold text-emerald-600">StayScape</span>
+            <span className="text-2xl font-bold text-white">StayScape</span>
             
             <div className="hidden md:flex flex-1 mx-4 items-center gap-4">
               <div className="relative flex-1">
@@ -86,40 +84,39 @@ const RentalLayout = () => {
                   placeholder="Search destinations..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-6 py-2 pl-12 rounded-full border focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-6 py-2 pl-12 rounded-full border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
-                <Search className="absolute left-4 top-2.5 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-4 top-2.5 h-5 w-5 text-indigo-500" />
               </div>
               <DatePicker onChange={setDateRange} />
               <GuestSelector onChange={setGuestCounts} />
               <button
                 onClick={() => setIsFilterModalOpen(true)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-full"
+                className="px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600 rounded-full border border-indigo-500"
               >
                 Filters
               </button>
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-              <button className="px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-full">
+              <button className="px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600 rounded-full">
                 List your property
               </button>
-              <button className="p-2 hover:bg-emerald-50 rounded-full">
-                <User className="h-5 w-5 text-emerald-600" />
+              <button className="p-2 hover:bg-indigo-600 rounded-full">
+                <User className="h-5 w-5 text-white" />
               </button>
             </div>
 
             <button 
-              className="md:hidden p-2 hover:bg-emerald-50 rounded-full"
+              className="md:hidden p-2 hover:bg-indigo-600 rounded-full"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <Menu className="h-5 w-5 text-emerald-600" />
+              <Menu className="h-5 w-5 text-white" />
             </button>
           </div>
 
-          {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden border-t p-4">
+            <div className="md:hidden border-t border-indigo-600 p-4">
               <div className="flex flex-col gap-4">
                 <div className="relative">
                   <input
@@ -127,15 +124,15 @@ const RentalLayout = () => {
                     placeholder="Search destinations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-6 py-2 pl-12 rounded-full border"
+                    className="w-full px-6 py-2 pl-12 rounded-full border border-indigo-300"
                   />
-                  <Search className="absolute left-4 top-2.5 h-5 w-5 text-gray-400" />
+                  <Search className="absolute left-4 top-2.5 h-5 w-5 text-indigo-500" />
                 </div>
                 <DatePicker onChange={setDateRange} />
                 <GuestSelector onChange={setGuestCounts} />
                 <button
                   onClick={() => setIsFilterModalOpen(true)}
-                  className="w-full px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-full border"
+                  className="w-full px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600 rounded-full border border-indigo-500"
                 >
                   Filters
                 </button>
@@ -145,7 +142,6 @@ const RentalLayout = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
       <main className="w-full px-4 md:px-8 lg:px-12 py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {properties.map(property => (
@@ -154,13 +150,12 @@ const RentalLayout = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full bg-white border-t border-gray-100 py-8">
-        <div className="px-4 md:px-8 lg:px-12">
+      <footer className="w-full bg-indigo-700 text-white py-8">
+        <div className="w-full px-4 md:px-8 lg:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-medium mb-4">Support</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-indigo-200">
                 <li>Help Center</li>
                 <li>Safety Information</li>
                 <li>Cancellation Options</li>
@@ -168,7 +163,7 @@ const RentalLayout = () => {
             </div>
             <div>
               <h3 className="font-medium mb-4">Community</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-indigo-200">
                 <li>Blog</li>
                 <li>Forum</li>
                 <li>Events</li>
@@ -176,7 +171,7 @@ const RentalLayout = () => {
             </div>
             <div>
               <h3 className="font-medium mb-4">Hosting</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-indigo-200">
                 <li>List Your Property</li>
                 <li>Host Resources</li>
                 <li>Community Forum</li>
@@ -184,20 +179,19 @@ const RentalLayout = () => {
             </div>
             <div>
               <h3 className="font-medium mb-4">About</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-indigo-200">
                 <li>Our Story</li>
                 <li>Careers</li>
                 <li>Press</li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t text-center text-sm text-gray-600">
+          <div className="mt-8 pt-8 border-t border-indigo-600 text-center text-sm text-indigo-200">
             © 2024 StayScape. All rights reserved.
           </div>
         </div>
       </footer>
 
-      {/* Filter Modal */}
       {isFilterModalOpen && (
         <FilterModal 
           onFilter={handleFilter} 
